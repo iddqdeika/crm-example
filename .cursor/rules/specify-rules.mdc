@@ -1,0 +1,33 @@
+﻿# qualityboard Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2026-02-26
+
+## Active Technologies
+- TypeScript ~5.6.2, React 18.3.1, Python >=3.12 (backend — unchanged) + Vite 5.4.10, React Router DOM 6.28.0 (002-ui-design-landing)
+- N/A (no data persistence changes) (002-ui-design-landing)
+
+- Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React + FastAPI, SQLAlchemy, Alembic, Uvicorn, PostgreSQL, React, React Router, React Testing Library (001-adtech-auth-profile)
+
+## Project Structure
+
+```text
+backend/
+frontend/
+tests/
+```
+
+## Commands
+
+cd src; pytest; ruff check .
+
+## Code Style
+
+Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React: Follow standard conventions
+
+## Recent Changes
+- 002-ui-design-landing: Added TypeScript ~5.6.2, React 18.3.1, Python >=3.12 (backend — unchanged) + Vite 5.4.10, React Router DOM 6.28.0
+
+- 001-adtech-auth-profile: Added Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React + FastAPI, SQLAlchemy, Alembic, Uvicorn, PostgreSQL, React, React Router, React Testing Library
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

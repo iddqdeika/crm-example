@@ -1,0 +1,19 @@
+---
+description: Docker and environment configuration standards for Qualityboard
+globs: docker/**/*.yml
+alwaysApply: false
+---
+
+# Docker & Env Configuration Standards
+
+- All deployable services MUST have a Dockerfile with a multi-stage build and a non-root user.
+- Use Docker Compose for local orchestration in `docker/docker-compose.*.yml`; keep service
+  names stable for predictable networking.
+- Store configuration only in environment variables (use `.env` and `.env.example`); never
+  commit secrets.
+- Backend containers MUST run a startup script that applies database migrations before
+  starting the app.
+- Use health checks for backend and database containers to support robust startup ordering.
+- Keep images lean by using slim base images and a `.dockerignore` that excludes venvs,
+  caches, and local artifacts.
+

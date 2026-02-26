@@ -1,0 +1,19 @@
+---
+description: Python FastAPI backend standards for Qualityboard
+globs: backend/src/**/*.py
+alwaysApply: false
+---
+
+# Python FastAPI Standards
+
+- Prefer async FastAPI endpoints with clear request/response `schemas` defined via Pydantic.
+- Keep business logic in `services/` and persistence in `models/` and `db` helpers; keep
+  `api/` routers thin.
+- Always inject database sessions via FastAPI dependencies; do not use global session objects.
+- Use Alembic migrations for all schema changes; never mutate the database schema manually.
+- Read all configuration from environment variables via a dedicated settings module in
+  `core/` (e.g., database URL, secret keys).
+- Ensure Docker images run under a non-root user and use multi-stage builds with slim base
+  images.
+- Write tests first (pytest) for each new behavior, including contract tests for HTTP routes.
+

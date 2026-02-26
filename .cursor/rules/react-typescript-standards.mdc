@@ -1,0 +1,18 @@
+---
+description: React + TypeScript frontend standards for Qualityboard
+globs: frontend/src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React + TypeScript Standards
+
+- Organize code into `components/`, `pages/`, `hooks/`, `services/`, `types/`, and `utils/`.
+- Use functional components with hooks; avoid class components.
+- Colocate tests with components using `.test.tsx` or `.spec.tsx` files.
+- Enable strict TypeScript settings and define explicit prop types for all components.
+- Access the backend only through a typed API client in `services/`; avoid ad-hoc `fetch`
+  scattered across components.
+- Keep authentication state and current user profile in a dedicated context or store
+  abstraction, not in random components.
+- Write tests first for key user flows (landing, sign-up, sign-in, profile view/update).
+

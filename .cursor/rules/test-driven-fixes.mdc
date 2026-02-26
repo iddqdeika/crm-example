@@ -1,0 +1,27 @@
+---
+description: Use test-driven approach when fixing behavior — add failing test first, then fix
+alwaysApply: true
+---
+
+# Test-Driven Fixes
+
+When fixing a bug or changing behavior:
+
+1. **Add a failing test first** that asserts the desired behavior (the behavior you want after the fix).
+2. **Implement the fix** so the new behavior is correct.
+3. **Confirm the new test passes** and that existing tests still pass.
+
+Do not implement the fix before the test exists. The test must fail before the fix and pass after it (red → green).
+
+## Where to put the test
+
+- **Backend**: Add or extend tests in `backend/tests/` — unit, integration, or contract tests as appropriate (e.g. `test_*.py` next to the code or in `tests/`).
+- **Frontend**: Add or extend tests next to the code or in `*.test.ts(x)` / `__tests__/` (e.g. Vitest).
+
+## Example
+
+Fixing “Profile page spams GET /me/profile”:
+
+1. Add a test that asserts the profile API is not called repeatedly when the Profile page is mounted (e.g. mock `profileApi.getProfile`, render Profile with a logged-in user, assert it was called once or a bounded number of times).
+2. Implement the fix (e.g. stop updating `user` in `loadProfile` so the Profile `useEffect` doesn’t re-run in a loop).
+3. Run the test; it should pass. Run the full test suite to confirm no regressions.

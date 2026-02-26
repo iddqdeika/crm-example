@@ -1,0 +1,52 @@
+:root {
+  /* Colors — Background */
+  --color-bg-primary: #08080f;
+  --color-bg-secondary: #111119;
+  --color-bg-elevated: #1a1a24;
+
+  /* Colors — Text */
+  --color-text-primary: #f0f0f5;
+  --color-text-secondary: #9d9dab;
+  --color-text-muted: #6b6b7b;
+
+  /* Colors — Accents */
+  --color-accent-1: #00e5a0;
+  --color-accent-2: #ff3d71;
+  --color-accent-3: #7b61ff;
+
+  /* Typography — Families */
+  --font-display: "Syne", sans-serif;
+  --font-body: "Outfit", sans-serif;
+
+  /* Typography — Sizes */
+  --font-size-hero: clamp(2.5rem, 5vw, 4.5rem);
+  --font-size-h2: clamp(1.5rem, 3vw, 2.25rem);
+  --font-size-h3: clamp(1.125rem, 2vw, 1.5rem);
+  --font-size-body: 1.125rem;
+  --font-size-small: 0.875rem;
+
+  /* Typography — Line Heights */
+  --line-height-tight: 1.1;
+  --line-height-body: 1.65;
+  --line-height-relaxed: 1.8;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
+  --space-xl: 6rem;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

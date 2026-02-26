@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+.git
+.gitignore
+*.md
+*.test.tsx
+*.spec.tsx
+__tests__
+.env
+.env.*
