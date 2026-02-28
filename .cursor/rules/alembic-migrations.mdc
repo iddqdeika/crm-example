@@ -1,0 +1,34 @@
+---
+description: Rules for creating Alembic migrations to avoid multiple-head errors
+globs: backend/migrations/versions/*.py
+alwaysApply: false
+---
+
+# Alembic Migration Rules
+
+## Always set `down_revision` to the current head
+
+Before creating a new migration, find the current head:
+
+```bash
+python -m alembic heads
+```
+
+Set `down_revision` to that value — **never hardcode an older revision**.
+
+```python
+# ✅ CORRECT — points to the current head
+revision: str = "20260227_002"
+down_revision: Union[str, None] = "20260226_002"  # result of `alembic heads`
+
+# ❌ WRONG — skips an intermediate migration, creates two heads
+down_revision: Union[str, None] = "20260226_001"
+```
+
+## Verify after writing
+
+```bash
+python -m alembic heads  # must show exactly ONE head
+```
+
+If you see two heads, one of your migrations has the wrong `down_revision`. Update it to point to the other head so the chain becomes linear.

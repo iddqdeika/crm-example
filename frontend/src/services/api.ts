@@ -26,6 +26,9 @@ export type ProfileDto = {
   email: string;
   avatar_url: string | null;
   role?: string;
+  session_inactivity_expires_at?: string | null;
+  session_absolute_expires_at?: string | null;
+  session_warning_seconds?: number;
 };
 
 export const authApi = {
@@ -49,6 +52,11 @@ export const authApi = {
 export const profileApi = {
   async getProfile() {
     return request<ProfileDto>("/me/profile");
+  },
+  async touchSession() {
+    return request<{ inactivity_expires_at: string }>("/me/session/touch", {
+      method: "POST",
+    });
   },
   async updatePassword(data: { current_password: string; new_password: string }) {
     return request<void>("/me/password", {

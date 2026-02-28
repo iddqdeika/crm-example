@@ -6,7 +6,8 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.settings import get_settings
+from core.session_cache import FakeSessionCache, SessionCache, SessionCacheEntry
+from core.settings import Settings, get_settings
 from models.session import AuthenticationSession
 from models.user import User, UserRole
 
@@ -64,18 +65,51 @@ async def create_session(
     user_id: UUID,
     ip_address: str | None = None,
     user_agent: str | None = None,
+    *,
+    settings: Settings | None = None,
+    session_cache: SessionCache | None = None,
 ) -> AuthenticationSession:
+    cfg = settings or _settings
     now = datetime.utcnow()
-    expires_at = now + timedelta(seconds=_settings.session_ttl_seconds)
+    expires_at = now + timedelta(seconds=cfg.session_inactivity_timeout_seconds)
+    absolute_expires_at = now + timedelta(seconds=cfg.session_max_lifetime_seconds)
     session = AuthenticationSession(
         user_id=user_id,
         expires_at=expires_at,
+        absolute_expires_at=absolute_expires_at,
         ip_address=ip_address,
         user_agent=user_agent,
     )
     db.add(session)
     await db.flush()
+
+    if session_cache is not None:
+        entry = SessionCacheEntry(
+            user_id=user_id,
+            inactivity_exp=expires_at,
+            absolute_exp=absolute_expires_at,
+        )
+        await session_cache.set_entry(session.id, entry)
+
     return session
+
+
+async def touch_session(
+    session: AuthenticationSession,
+    session_cache: SessionCache,
+    *,
+    settings: Settings | None = None,
+) -> datetime:
+    """Refresh the inactivity deadline (capped at absolute_expires_at). Returns new expires_at."""
+    cfg = settings or _settings
+    now = datetime.utcnow()
+    new_exp = min(
+        now + timedelta(seconds=cfg.session_inactivity_timeout_seconds),
+        session.absolute_expires_at,
+    )
+    session.expires_at = new_exp
+    await session_cache.touch(session.id, new_inactivity_exp=new_exp)
+    return new_exp
 
 
 async def change_password(

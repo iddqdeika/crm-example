@@ -1,0 +1,210 @@
+/* ======================================================
+   Admin Page — User management
+   BEM block: .admin
+   ====================================================== */
+
+.admin {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.admin__heading {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+.admin__count {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-md);
+}
+
+/* ── User List ────────────────────────────────────────── */
+
+.admin__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin__item {
+  border-bottom: 1px solid var(--color-bg-elevated);
+}
+
+.admin__item:last-child {
+  border-bottom: none;
+}
+
+.admin__user-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  padding: var(--space-sm) var(--space-xs);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.admin__user-btn:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+.admin__user-btn:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+.admin__user-btn--inactive {
+  color: var(--color-text-muted);
+}
+
+/* ── Detail Panel ─────────────────────────────────────── */
+
+.admin__detail {
+  background-color: var(--color-bg-elevated);
+  border-radius: 8px;
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.admin__detail-heading {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-xs);
+}
+
+.admin__detail-name {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-md);
+}
+
+.admin__detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.admin__detail-select {
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-text-muted);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 44px;
+}
+
+.admin__detail-select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-3);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-3) 25%, transparent);
+}
+
+.admin__detail-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent-1);
+  cursor: pointer;
+}
+
+.admin__detail-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+/* ── Buttons ──────────────────────────────────────────── */
+
+.admin__btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-md);
+  min-height: 40px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin__btn:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: 2px;
+}
+
+.admin__btn--primary {
+  color: var(--color-bg-primary);
+  background-color: var(--color-accent-1);
+  border: none;
+}
+
+.admin__btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--color-accent-1) 30%, transparent);
+}
+
+.admin__btn--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.admin__btn--ghost {
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-text-muted);
+}
+
+.admin__btn--ghost:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .admin {
+    padding: var(--space-lg) var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .admin__detail-actions {
+    flex-direction: column;
+  }
+
+  .admin__btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin__btn--primary:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,31 @@
+---
+description: Enforces mandatory use of docs/design.md as the source of truth for all UI design decisions
+alwaysApply: true
+---
+
+# UI Design Document Authority
+
+`docs/design.md` is the **single source of truth** for all visual design decisions in QualityBoard (colors, typography, spacing, layout, accessibility, tone).
+
+## When Editing or Reviewing UI
+
+1. **Read `docs/design.md` first** before making any CSS, styling, or layout changes.
+2. **Follow the design tokens** — always use CSS custom properties (`--color-*`, `--font-*`, `--space-*`) from `frontend/src/index.css`. Never hardcode colors, font families, or spacing values.
+3. **Validate against the document** — after making UI changes, verify they comply with the design document's guidelines (contrast ratios, font pairing, spacing scale, accessibility targets).
+
+## When the User Wants to Change Design Patterns
+
+If a user requests a visual change that **contradicts** `docs/design.md` (e.g., different color scheme, new font, altered spacing scale, changed accessibility target):
+
+1. **Inform the user** that the request conflicts with the current design document.
+2. **Ask**: "This would diverge from the design document. Should I update `docs/design.md` first to reflect the new direction?"
+3. **If they accept**: Update `docs/design.md` with the new guidelines, then update `frontend/src/index.css` tokens to match, and finally apply the change to the component(s).
+4. **If they decline**: Do not make the change. Explain that keeping the design document in sync prevents visual inconsistency.
+
+## Quick Reference
+
+- Design document: `docs/design.md`
+- Design tokens (CSS): `frontend/src/index.css` (`:root` custom properties)
+- Dark theme base: `--color-bg-primary` (#08080f)
+- Body text contrast target: >= 7:1 (WCAG 2.1 AA enhanced)
+- Fonts: Syne (display) + Outfit (body)

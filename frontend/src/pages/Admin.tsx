@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { adminApi, type AdminUserSummary } from "../services/api";
+import "./Admin.css";
 
 export default function Admin() {
   const { profile } = useAuth();
@@ -29,20 +30,21 @@ export default function Admin() {
   }, [profile?.role]);
 
   if (profile?.role !== "admin") {
-    return <div>Access denied.</div>;
+    return <div className="admin"><p className="auth__error">Access denied.</p></div>;
   }
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div role="alert">Error: {error}</div>;
+  if (loading) return <div className="admin"><p className="admin__count">Loading...</p></div>;
+  if (error) return <div className="admin"><p className="auth__error" role="alert">Error: {error}</p></div>;
 
   return (
-    <div className="admin-page" data-testid="admin-page">
-      <h1>Admin – Users</h1>
-      <p>Total: {total}</p>
-      <ul data-testid="admin-user-list">
+    <div className="admin" data-testid="admin-page">
+      <h1 className="admin__heading">Admin – Users</h1>
+      <p className="admin__count">Total: {total}</p>
+      <ul className="admin__list" data-testid="admin-user-list">
         {users.map((u) => (
-          <li key={u.id}>
+          <li key={u.id} className="admin__item">
             <button
               type="button"
+              className={`admin__user-btn${u.is_active ? "" : " admin__user-btn--inactive"}`}
               onClick={() => setSelected(u)}
               data-testid={`admin-user-${u.id}`}
             >
@@ -89,12 +91,13 @@ function AdminUserDetail({
   }
 
   return (
-    <div data-testid="admin-user-detail">
-      <h2>{user.email}</h2>
-      <p>{user.display_name}</p>
-      <label>
+    <div className="admin__detail" data-testid="admin-user-detail">
+      <h2 className="admin__detail-heading">{user.email}</h2>
+      <p className="admin__detail-name">{user.display_name}</p>
+      <label className="admin__detail-field">
         Role
         <select
+          className="admin__detail-select"
           value={role}
           onChange={(e) => setRole(e.target.value)}
           data-testid="admin-edit-role"
@@ -103,21 +106,26 @@ function AdminUserDetail({
           <option value="admin">admin</option>
         </select>
       </label>
-      <label>
-        <input
-          type="checkbox"
-          checked={isActive}
-          onChange={(e) => setIsActive(e.target.checked)}
-          data-testid="admin-edit-is-active"
-        />
-        Active
+      <label className="admin__detail-field">
+        <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <input
+            type="checkbox"
+            className="admin__detail-checkbox"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            data-testid="admin-edit-is-active"
+          />
+          Active
+        </span>
       </label>
-      <button type="button" onClick={handleSave} disabled={saving} data-testid="admin-save">
-        Save
-      </button>
-      <button type="button" onClick={onClose}>
-        Close
-      </button>
+      <div className="admin__detail-actions">
+        <button type="button" className="admin__btn admin__btn--primary" onClick={handleSave} disabled={saving} data-testid="admin-save">
+          Save
+        </button>
+        <button type="button" className="admin__btn admin__btn--ghost" onClick={onClose}>
+          Close
+        </button>
+      </div>
     </div>
   );
 }

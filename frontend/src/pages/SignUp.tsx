@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignUpForm from "../components/SignUpForm";
 import { useAuth } from "../contexts/AuthContext";
+import "./auth.css";
 
 export default function SignUp() {
   const { signup } = useAuth();
@@ -23,9 +24,13 @@ export default function SignUp() {
   }
 
   return (
-    <div className="auth-page">
-      <h1>Sign up</h1>
+    <div className="auth">
+      <h1 className="auth__heading">Sign up</h1>
       <SignUpForm onSubmit={handleSubmit} error={error} />
+      <p className="auth__footer">
+        Already have an account?{" "}
+        <Link to="/login" className="auth__link">Sign in</Link>
+      </p>
     </div>
   );
 }

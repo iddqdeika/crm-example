@@ -24,21 +24,23 @@ export default function PasswordChangeForm({ onSubmit, error }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} data-testid="password-change-form">
-      <label>
-        Current password
+    <form onSubmit={handleSubmit} className="auth__form" data-testid="password-change-form">
+      <label className="auth__field">
+        <span className="auth__label">Current password</span>
         <input
           type="password"
+          className="auth__input"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           required
           data-testid="current-password"
         />
       </label>
-      <label>
-        New password
+      <label className="auth__field">
+        <span className="auth__label">New password</span>
         <input
           type="password"
+          className="auth__input"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
@@ -46,8 +48,8 @@ export default function PasswordChangeForm({ onSubmit, error }: Props) {
           data-testid="new-password"
         />
       </label>
-      {error && <p role="alert">{error}</p>}
-      <button type="submit" data-testid="password-change-submit">
+      {error && <p className="auth__error" role="alert">{error}</p>}
+      <button type="submit" className="auth__btn" data-testid="password-change-submit">
         Change password
       </button>
     </form>

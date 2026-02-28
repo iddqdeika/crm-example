@@ -23,11 +23,11 @@ export default function AvatarUpload({ onUpload, onRemove, avatarUrl, error }: P
   }
 
   return (
-    <div data-testid="avatar-upload">
+    <div className="profile__avatar-upload" data-testid="avatar-upload">
       {avatarUrl ? (
-        <img src={avatarUrl} alt="Avatar" data-testid="avatar-image" />
+        <img src={avatarUrl} alt="Avatar" className="profile__avatar" data-testid="avatar-image" />
       ) : (
-        <div data-testid="avatar-placeholder">No avatar</div>
+        <div className="profile__avatar-placeholder" data-testid="avatar-placeholder">No avatar</div>
       )}
       <input
         type="file"
@@ -39,13 +39,14 @@ export default function AvatarUpload({ onUpload, onRemove, avatarUrl, error }: P
       {avatarUrl && (
         <button
           type="button"
+          className="auth__btn"
           onClick={() => onRemove()}
           data-testid="avatar-remove"
         >
           Remove avatar
         </button>
       )}
-      {error && <p role="alert">{error}</p>}
+      {error && <p className="auth__error" role="alert">{error}</p>}
     </div>
   );
 }

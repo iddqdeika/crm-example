@@ -5,6 +5,11 @@ Auto-generated from all feature plans. Last updated: 2026-02-26
 ## Active Technologies
 - TypeScript ~5.6.2, React 18.3.1, Python >=3.12 (backend — unchanged) + Vite 5.4.10, React Router DOM 6.28.0 (002-ui-design-landing)
 - N/A (no data persistence changes) (002-ui-design-landing)
+- TypeScript ~5.6.2, React 18.3.1 + Vite 5.4.10, React Router DOM 6.28.0 (003-fix-ui-design-pages)
+- Python 3.12 (backend), TypeScript / React 18 (frontend — no changes) + FastAPI, SQLAlchemy async, `boto3` (S3 client), MinIO Docker image (004-media-persistence)
+- PostgreSQL (metadata), MinIO/S3 (binary objects) (004-media-persistence)
+- Python 3.12 (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy async, `redis[asyncio]>=5.0` (new), Alembic, React Router v6 (005-session-persistence)
+- PostgreSQL (authoritative session records), Redis (session cache — hot path) (005-session-persistence)
 
 - Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React + FastAPI, SQLAlchemy, Alembic, Uvicorn, PostgreSQL, React, React Router, React Testing Library (001-adtech-auth-profile)
 
@@ -25,9 +30,10 @@ cd src; pytest; ruff check .
 Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React: Follow standard conventions
 
 ## Recent Changes
-- 002-ui-design-landing: Added TypeScript ~5.6.2, React 18.3.1, Python >=3.12 (backend — unchanged) + Vite 5.4.10, React Router DOM 6.28.0
+- 005-session-persistence: Added Python 3.12 (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy async, `redis[asyncio]>=5.0` (new), Alembic, React Router v6
+- 004-media-persistence: Added Python 3.12 (backend), TypeScript / React 18 (frontend — no changes) + FastAPI, SQLAlchemy async, `boto3` (S3 client), MinIO Docker image
+- 003-fix-ui-design-pages: Added TypeScript ~5.6.2, React 18.3.1 + Vite 5.4.10, React Router DOM 6.28.0
 
-- 001-adtech-auth-profile: Added Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React + FastAPI, SQLAlchemy, Alembic, Uvicorn, PostgreSQL, React, React Router, React Testing Library
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

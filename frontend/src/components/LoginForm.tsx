@@ -18,11 +18,12 @@ export default function LoginForm({ onSubmit, error }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form" data-testid="login-form">
-      <label>
-        Email
+    <form onSubmit={handleSubmit} className="auth__form" data-testid="login-form">
+      <label className="auth__field">
+        <span className="auth__label">Email</span>
         <input
           type="email"
+          className="auth__input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -30,10 +31,11 @@ export default function LoginForm({ onSubmit, error }: Props) {
           data-testid="login-email"
         />
       </label>
-      <label>
-        Password
+      <label className="auth__field">
+        <span className="auth__label">Password</span>
         <input
           type="password"
+          className="auth__input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -41,8 +43,8 @@ export default function LoginForm({ onSubmit, error }: Props) {
           data-testid="login-password"
         />
       </label>
-      {error && <p className="auth-form__error" role="alert">{error}</p>}
-      <button type="submit" data-testid="login-submit">
+      {error && <p className="auth__error" role="alert">{error}</p>}
+      <button type="submit" className="auth__btn" data-testid="login-submit">
         Sign in
       </button>
     </form>

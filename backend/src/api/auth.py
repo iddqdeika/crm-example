@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.auth import get_current_session
 from core.database import get_db
+from core.session_cache import SessionCache, get_session_cache
 from core.settings import get_settings
 from models.session import AuthenticationSession
 from models.user import User
@@ -28,7 +29,7 @@ def _set_session_cookie(response: JSONResponse, session_id: str) -> None:
         httponly=True,
         secure=_settings.app_env == "production",
         samesite="lax",
-        max_age=_settings.session_ttl_seconds,
+        max_age=_settings.session_max_lifetime_seconds,
     )
 
 
@@ -37,6 +38,7 @@ async def signup(
     body: SignUpRequest,
     request: Request,
     db: AsyncSession = Depends(get_db),
+    cache: SessionCache = Depends(get_session_cache),
 ) -> JSONResponse:
     existing = await get_user_by_email(db, body.email)
     if existing:
@@ -47,6 +49,7 @@ async def signup(
         user.id,
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent"),
+        session_cache=cache,
     )
     res = JSONResponse(content={"message": "User created"}, status_code=status.HTTP_201_CREATED)
     _set_session_cookie(res, str(session.id))
@@ -58,6 +61,7 @@ async def login(
     body: LoginRequest,
     request: Request,
     db: AsyncSession = Depends(get_db),
+    cache: SessionCache = Depends(get_session_cache),
 ) -> JSONResponse:
     user = await authenticate_user(db, body.email, body.password)
     if not user:
@@ -70,6 +74,7 @@ async def login(
         user.id,
         ip_address=request.client.host if request.client else None,
         user_agent=request.headers.get("user-agent"),
+        session_cache=cache,
     )
     res = JSONResponse(content={"message": "OK"}, status_code=status.HTTP_200_OK)
     _set_session_cookie(res, str(session.id))
@@ -80,7 +85,9 @@ async def login(
 async def logout(
     session: AuthenticationSession = Depends(get_current_session),
     db: AsyncSession = Depends(get_db),
+    cache: SessionCache = Depends(get_session_cache),
 ) -> Response:
+    await cache.revoke(session.id)
     await revoke_session(db, session.id)
     res = Response(status_code=status.HTTP_204_NO_CONTENT)
     res.delete_cookie(key=_settings.session_cookie_name)

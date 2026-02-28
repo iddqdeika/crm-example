@@ -1,0 +1,104 @@
+/* ======================================================
+   AppHeader — Sticky dark navigation bar
+   BEM block: .app-header
+   ====================================================== */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-bg-elevated);
+  min-height: 56px;
+}
+
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+}
+
+.app-header__link {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--space-xs) 0;
+  transition: color 0.15s ease;
+}
+
+.app-header__link:hover {
+  color: var(--color-text-primary);
+}
+
+.app-header__link:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.app-header__user {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.app-header__logout {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-text-muted);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-sm);
+  cursor: pointer;
+  min-height: 36px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.app-header__logout:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.app-header__logout:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: 2px;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .app-header {
+    flex-wrap: wrap;
+    padding: var(--space-xs) var(--space-sm);
+    gap: var(--space-xs);
+  }
+
+  .app-header__nav {
+    order: 2;
+    width: 100%;
+    gap: var(--space-sm);
+  }
+
+  .app-header__user {
+    margin-left: 0;
+    order: 1;
+    font-size: var(--font-size-small);
+  }
+
+  .app-header__logout {
+    order: 1;
+    margin-left: auto;
+  }
+}

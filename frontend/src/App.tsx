@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import AppHeader from "./components/AppHeader";
+import SessionExpiryWarning from "./components/SessionExpiryWarning";
 import Profile from "./pages/Profile";
 import SignUp from "./pages/SignUp";
 
@@ -24,9 +25,11 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+  const { user } = useAuth();
   return (
     <>
       <AppHeader />
+      {user && <SessionExpiryWarning />}
       <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/signup" element={<SignUp />} />

@@ -15,7 +15,19 @@ class Settings(BaseSettings):
 
     # Session
     session_cookie_name: str = "session"
-    session_ttl_seconds: int = 86400 * 7  # 7 days
+    session_inactivity_timeout_seconds: int = 1800
+    session_max_lifetime_seconds: int = 86400 * 8
+    session_warning_seconds: int = 300
+
+    # Redis
+    redis_url: str = "redis://localhost:6379"
+
+    # Object storage (MinIO / S3-compatible)
+    storage_endpoint_url: str = "http://localhost:9000"
+    storage_public_url: str = "http://localhost:9000"
+    storage_access_key: str = "minioadmin"
+    storage_secret_key: str = "minioadmin"
+    storage_bucket: str = "qualityboard-media"
 
 
 def get_settings() -> Settings:

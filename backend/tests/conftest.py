@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from app.main import app
 from core.database import get_db
+from core.session_cache import FakeSessionCache, get_session_cache
 from models.base import Base
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -41,11 +42,20 @@ async def db_session(engine) -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest_asyncio.fixture
-async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
+def fake_cache() -> FakeSessionCache:
+    return FakeSessionCache()
+
+
+@pytest_asyncio.fixture
+async def client(db_session: AsyncSession, fake_cache: FakeSessionCache) -> AsyncGenerator[AsyncClient, None]:
     async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
         yield db_session
 
+    def override_get_session_cache() -> FakeSessionCache:
+        return fake_cache
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_session_cache] = override_get_session_cache
     async with AsyncClient(
         transport=ASGITransport(app=app),
         base_url="http://test",

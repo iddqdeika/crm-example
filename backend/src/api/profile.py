@@ -1,18 +1,16 @@
 """Profile routes: GET /me/profile, PATCH /me/password, POST/DELETE /me/avatar."""
-from pathlib import Path
-from uuid import UUID
-
-from fastapi import APIRouter, Depends, File, HTTPException, Request, status, UploadFile
-from fastapi.responses import FileResponse, Response
-from sqlalchemy import select, and_
+from fastapi import APIRouter, Depends, File, HTTPException, Request, Response, status, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.auth import get_current_user
+from core.auth import get_current_session, get_current_user
 from core.database import get_db
-from models.avatar import Avatar
+from core.session_cache import SessionCache, get_session_cache
+from core.settings import Settings, get_settings
+from core.storage import StorageClient, StorageError, get_storage_client
+from models.session import AuthenticationSession
 from models.user import User
 from schemas.profile import PasswordUpdateRequest, ProfileResponse
-from services.auth_service import change_password
+from services.auth_service import change_password, touch_session
 from services.avatar_service import upload_avatar, remove_avatar
 from services.profile_service import get_profile_for_response
 
@@ -22,11 +20,24 @@ router = APIRouter(prefix="/me", tags=["profile"])
 @router.get("/profile", response_model=ProfileResponse)
 async def get_my_profile(
     request: Request,
+    session: AuthenticationSession = Depends(get_current_session),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    storage: StorageClient = Depends(get_storage_client),
+    settings: Settings = Depends(get_settings),
 ) -> ProfileResponse:
-    data = await get_profile_for_response(db, current_user, str(request.base_url))
+    data = await get_profile_for_response(db, current_user, storage=storage, session=session, settings=settings)
     return ProfileResponse(**data)
+
+
+@router.post("/session/touch")
+async def session_touch(
+    session: AuthenticationSession = Depends(get_current_session),
+    cache: SessionCache = Depends(get_session_cache),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    new_exp = await touch_session(session, cache, settings=settings)
+    return {"inactivity_expires_at": new_exp.isoformat() + "Z"}
 
 
 @router.patch("/password", status_code=status.HTTP_204_NO_CONTENT)
@@ -50,24 +61,43 @@ async def update_password(
 async def post_avatar(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    storage: StorageClient = Depends(get_storage_client),
     file: UploadFile = File(...),
 ) -> dict:
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Unsupported format",
+            detail="Unsupported image type. Allowed: JPEG, PNG, GIF, WebP.",
         )
     content = await file.read()
     try:
         avatar = await upload_avatar(
-            db, current_user, content, file.content_type, file.filename or "image"
+            db,
+            current_user,
+            content,
+            file.content_type,
+            file.filename or "image",
+            storage_client=storage,
         )
     except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        msg = str(e)
+        if "too large" in msg.lower():
+            detail = "File too large. Maximum allowed size is 5 MB."
+        else:
+            detail = "Unsupported image type. Allowed: JPEG, PNG, GIF, WebP."
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
+    except StorageError:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Storage service unavailable. Please try again.",
+        )
+
+    avatar_url = await storage.get_presigned_url(avatar.storage_path)
     return {
         "id": str(avatar.id),
+        "avatar_url": avatar_url,
         "content_type": avatar.content_type,
-        "url": f"/me/avatar/{avatar.id}/image",
+        "file_size_bytes": avatar.file_size_bytes,
     }
 
 
@@ -75,25 +105,7 @@ async def post_avatar(
 async def delete_avatar(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    storage: StorageClient = Depends(get_storage_client),
 ) -> Response:
-    await remove_avatar(db, current_user)
+    await remove_avatar(db, current_user, storage_client=storage)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
-@router.get("/avatar/{avatar_id}/image")
-async def get_avatar_image(
-    avatar_id: str,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-) -> FileResponse:
-    try:
-        uid = UUID(avatar_id)
-    except ValueError:
-        raise HTTPException(status_code=404, detail="Not found")
-    result = await db.execute(
-        select(Avatar).where(and_(Avatar.id == uid, Avatar.user_id == current_user.id))
-    )
-    av = result.scalar_one_or_none()
-    if not av or not Path(av.storage_path).exists():
-        raise HTTPException(status_code=404, detail="Not found")
-    return FileResponse(av.storage_path, media_type=av.content_type)

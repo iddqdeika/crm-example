@@ -23,11 +23,12 @@ export default function SignUpForm({ onSubmit, error }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form" data-testid="signup-form">
-      <label>
-        Display name
+    <form onSubmit={handleSubmit} className="auth__form" data-testid="signup-form">
+      <label className="auth__field">
+        <span className="auth__label">Display name</span>
         <input
           type="text"
+          className="auth__input"
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           required
@@ -35,10 +36,11 @@ export default function SignUpForm({ onSubmit, error }: Props) {
           data-testid="signup-display-name"
         />
       </label>
-      <label>
-        Email
+      <label className="auth__field">
+        <span className="auth__label">Email</span>
         <input
           type="email"
+          className="auth__input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -46,10 +48,11 @@ export default function SignUpForm({ onSubmit, error }: Props) {
           data-testid="signup-email"
         />
       </label>
-      <label>
-        Password
+      <label className="auth__field">
+        <span className="auth__label">Password</span>
         <input
           type="password"
+          className="auth__input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -58,8 +61,8 @@ export default function SignUpForm({ onSubmit, error }: Props) {
           data-testid="signup-password"
         />
       </label>
-      {error && <p className="auth-form__error" role="alert">{error}</p>}
-      <button type="submit" data-testid="signup-submit">
+      {error && <p className="auth__error" role="alert">{error}</p>}
+      <button type="submit" className="auth__btn" data-testid="signup-submit">
         Sign up
       </button>
     </form>

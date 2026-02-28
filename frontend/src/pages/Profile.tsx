@@ -3,6 +3,8 @@ import { useAuth } from "../contexts/AuthContext";
 import { profileApi } from "../services/api";
 import AvatarUpload from "../components/AvatarUpload";
 import PasswordChangeForm from "../components/PasswordChangeForm";
+import "./Profile.css";
+import "./auth.css";
 
 export default function Profile() {
   const { profile, loadProfile, user } = useAuth();
@@ -50,21 +52,25 @@ export default function Profile() {
   }
 
   return (
-    <div className="profile-page" data-testid="profile-page">
-      <h1>Profile</h1>
-      <p data-testid="profile-display-name">{p.display_name}</p>
-      <p data-testid="profile-email">{p.email}</p>
-      {p.avatar_url ? (
-        <img src={p.avatar_url} alt="Avatar" data-testid="profile-avatar" />
-      ) : (
-        <div data-testid="profile-avatar-placeholder">No avatar</div>
-      )}
-      <section>
-        <h2>Change password</h2>
+    <div className="profile" data-testid="profile-page">
+      <h1 className="profile__heading">Profile</h1>
+      <div className="profile__info">
+        {p.avatar_url ? (
+          <img src={p.avatar_url} alt="Avatar" className="profile__avatar" data-testid="profile-avatar" />
+        ) : (
+          <div className="profile__avatar-placeholder" data-testid="profile-avatar-placeholder">No avatar</div>
+        )}
+        <div>
+          <p className="profile__name" data-testid="profile-display-name">{p.display_name}</p>
+          <p className="profile__email" data-testid="profile-email">{p.email}</p>
+        </div>
+      </div>
+      <section className="profile__section">
+        <h2 className="profile__section-heading">Change password</h2>
         <PasswordChangeForm onSubmit={handlePasswordChange} error={passwordError} />
       </section>
-      <section>
-        <h2>Avatar</h2>
+      <section className="profile__section">
+        <h2 className="profile__section-heading">Avatar</h2>
         <AvatarUpload
           onUpload={handleAvatarUpload}
           onRemove={handleAvatarRemove}
