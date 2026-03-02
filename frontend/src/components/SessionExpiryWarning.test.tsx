@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import SessionExpiryWarning from "./SessionExpiryWarning";
 
 const mockTouchSession = vi.fn();
@@ -48,35 +48,44 @@ describe("SessionExpiryWarning", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("T035: shows inactivity warning when near inactivity expiry", () => {
+  it("T035: shows inactivity warning when near inactivity expiry (popup, after grace)", async () => {
     mockUseAuth.mockReturnValue({
       sessionInfo: makeSessionInfo({ inactivitySecsFromNow: 200, absoluteSecsFromNow: 28800, warningSecs: 300 }),
       touchSession: mockTouchSession,
     });
 
     render(<SessionExpiryWarning />);
+    await act(async () => {
+      vi.advanceTimersByTime(61 * 1000); // Past 60s grace so popup is shown
+    });
     expect(screen.getByRole("alert")).toBeInTheDocument();
-    expect(screen.getByText(/click anywhere/i)).toBeInTheDocument();
+    expect(screen.getByText(/click below to stay logged in/i)).toBeInTheDocument();
   });
 
-  it("T036: shows hard-cap warning when near absolute expiry (not extendable)", () => {
+  it("T036: shows hard-cap warning when near absolute expiry (not extendable)", async () => {
     mockUseAuth.mockReturnValue({
       sessionInfo: makeSessionInfo({ inactivitySecsFromNow: 1800, absoluteSecsFromNow: 200, warningSecs: 300 }),
       touchSession: mockTouchSession,
     });
 
     render(<SessionExpiryWarning />);
+    await act(async () => {
+      vi.advanceTimersByTime(61 * 1000);
+    });
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByText(/cannot be extended/i)).toBeInTheDocument();
   });
 
-  it("T038: clicking dismiss on inactivity warning calls touchSession", () => {
+  it("T038: clicking dismiss on inactivity warning calls touchSession", async () => {
     mockUseAuth.mockReturnValue({
       sessionInfo: makeSessionInfo({ inactivitySecsFromNow: 200, absoluteSecsFromNow: 28800, warningSecs: 300 }),
       touchSession: mockTouchSession,
     });
 
     render(<SessionExpiryWarning />);
+    await act(async () => {
+      vi.advanceTimersByTime(61 * 1000);
+    });
 
     const dismissBtn = screen.getByRole("button", { name: /stay logged in/i });
     fireEvent.click(dismissBtn);

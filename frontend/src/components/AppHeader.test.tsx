@@ -47,4 +47,9 @@ describe("AppHeader", () => {
     expect(adminLink).toHaveAttribute("href", "/admin");
     expect(adminLink).toHaveClass("app-header__link");
   });
+
+  it("shows Campaigns link for admin (US1)", () => {
+    renderHeader();
+    expect(screen.getByTestId("header-campaigns-link")).toHaveAttribute("href", "/campaigns");
+  });
 });

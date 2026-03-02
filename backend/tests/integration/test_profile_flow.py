@@ -7,14 +7,14 @@ from httpx import AsyncClient
 async def test_get_profile_when_authenticated(client: AsyncClient) -> None:
     """After signup, GET /me/profile returns profile with correct email and display_name."""
     await client.post(
-        "/auth/signup",
+        "/api/auth/signup",
         json={
             "email": "flowprofile@example.com",
             "password": "SecurePass1!",
             "display_name": "Flow Profile",
         },
     )
-    r = await client.get("/me/profile")
+    r = await client.get("/api/me/profile")
     if r.status_code == 404:
         pytest.skip("Profile route not implemented yet")
     assert r.status_code == 200

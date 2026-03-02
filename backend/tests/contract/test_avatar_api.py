@@ -25,10 +25,10 @@ def override_storage():
 
 async def _signup_and_login(client: AsyncClient, email: str = "avatar@test.com") -> None:
     await client.post(
-        "/auth/signup",
+        "/api/auth/signup",
         json={"email": email, "password": "SecurePass1!", "display_name": "Avatar User"},
     )
-    await client.post("/auth/login", json={"email": email, "password": "SecurePass1!"})
+    await client.post("/api/auth/login", json={"email": email, "password": "SecurePass1!"})
 
 
 @pytest.mark.asyncio
@@ -36,7 +36,7 @@ async def test_post_avatar_returns_201(client: AsyncClient) -> None:
     """T016: valid JPEG upload returns 201 with id, avatar_url, content_type, file_size_bytes."""
     await _signup_and_login(client)
     r = await client.post(
-        "/me/avatar",
+        "/api/me/avatar",
         files={"file": ("photo.jpg", io.BytesIO(SMALL_JPEG), "image/jpeg")},
     )
     assert r.status_code == 201, r.text
@@ -54,7 +54,7 @@ async def test_post_avatar_rejects_bad_type(client: AsyncClient) -> None:
     """T017: non-image content type returns 400 with informative detail."""
     await _signup_and_login(client, "bad-type@test.com")
     r = await client.post(
-        "/me/avatar",
+        "/api/me/avatar",
         files={"file": ("doc.txt", io.BytesIO(b"text content"), "text/plain")},
     )
     assert r.status_code == 400, r.text
@@ -67,7 +67,7 @@ async def test_post_avatar_rejects_oversized(client: AsyncClient) -> None:
     await _signup_and_login(client, "oversized@test.com")
     big = b"x" * (5 * 1024 * 1024 + 1)
     r = await client.post(
-        "/me/avatar",
+        "/api/me/avatar",
         files={"file": ("big.jpg", io.BytesIO(big), "image/jpeg")},
     )
     assert r.status_code == 400, r.text
@@ -78,7 +78,7 @@ async def test_post_avatar_rejects_oversized(client: AsyncClient) -> None:
 async def test_post_avatar_requires_auth(client: AsyncClient) -> None:
     """T019: unauthenticated POST returns 401."""
     r = await client.post(
-        "/me/avatar",
+        "/api/me/avatar",
         files={"file": ("photo.jpg", io.BytesIO(SMALL_JPEG), "image/jpeg")},
     )
     assert r.status_code == 401, r.text
@@ -89,13 +89,13 @@ async def test_delete_avatar_returns_204(client: AsyncClient) -> None:
     """T020: DELETE after upload returns 204; subsequent GET /me/profile has null avatar_url."""
     await _signup_and_login(client, "delete-avatar@test.com")
     await client.post(
-        "/me/avatar",
+        "/api/me/avatar",
         files={"file": ("photo.jpg", io.BytesIO(SMALL_JPEG), "image/jpeg")},
     )
-    r = await client.delete("/me/avatar")
+    r = await client.delete("/api/me/avatar")
     assert r.status_code == 204, r.text
 
-    profile_r = await client.get("/me/profile")
+    profile_r = await client.get("/api/me/profile")
     assert profile_r.status_code == 200
     assert profile_r.json()["avatar_url"] is None
 
@@ -103,7 +103,7 @@ async def test_delete_avatar_returns_204(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_delete_avatar_requires_auth(client: AsyncClient) -> None:
     """T021: unauthenticated DELETE returns 401."""
-    r = await client.delete("/me/avatar")
+    r = await client.delete("/api/me/avatar")
     assert r.status_code == 401, r.text
 
 
@@ -125,7 +125,7 @@ async def test_post_avatar_returns_503_on_storage_error(client: AsyncClient) -> 
     app.dependency_overrides[get_storage_client] = lambda: FailingStorage()
     await _signup_and_login(client, "storage-error@test.com")
     r = await client.post(
-        "/me/avatar",
+        "/api/me/avatar",
         files={"file": ("photo.jpg", io.BytesIO(SMALL_JPEG), "image/jpeg")},
     )
     # Restore fake for cleanup

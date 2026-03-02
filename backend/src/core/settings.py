@@ -1,4 +1,6 @@
 """Application settings from environment variables."""
+import uuid
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,6 +23,16 @@ class Settings(BaseSettings):
 
     # Redis
     redis_url: str = "redis://localhost:6379"
+
+    # Campaign management: user ID to reassign campaigns when owner is deleted
+    designated_system_owner_id: uuid.UUID | None = None
+
+    @field_validator("designated_system_owner_id", mode="before")
+    @classmethod
+    def empty_str_to_none(cls, v: object) -> uuid.UUID | None:
+        if v == "" or v is None:
+            return None
+        return v if isinstance(v, uuid.UUID) else uuid.UUID(str(v))
 
     # Object storage (MinIO / S3-compatible)
     storage_endpoint_url: str = "http://localhost:9000"

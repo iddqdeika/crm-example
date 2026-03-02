@@ -7,6 +7,18 @@
 
 ---
 
+## Clarifications
+
+### Session 2026-02-27
+
+- Q: When a buyer (campaign owner) is deleted from the system, what should happen to the campaigns they own? → A: Reassign to designated system owner — campaigns are reassigned to a single designated system/user account so ownership remains explicit and consistent.
+- Q: When a campaign is archived, can the owner or admin still edit it, or is it view-only? → A: View only — archived campaigns are visible but not editable; no field changes or ownership transfer until reactivation (if in scope).
+- Q: Budget validation: should the system allow a campaign budget of zero, or only strictly positive values? → A: Allow zero — campaign budget may be 0; validation rejects negative only.
+- Q: Column-setup: if the user hides every column in the popup, should the system enforce at least one visible column? → A: Yes — at least one column must remain visible; validation or UI prevents removing the last column.
+- Q: If two users try to change or transfer the same campaign's ownership at the same time, how should the system resolve it? → A: Optimistic lock — save includes version/timestamp; if the campaign was changed since load, the save is rejected with a message asking the user to refresh and try again.
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Buyer Role Access (Priority: P1)
@@ -98,12 +110,12 @@ The campaign listing page provides a table of campaigns. The buyer sees only the
 
 ### Edge Cases
 
-- What happens when a buyer is deleted — do their campaigns become ownerless or transfer to an admin?
-- What happens when a campaign is archived — can it still be edited or only viewed?
-- What happens if a budget value of zero or negative is entered?
+- When a buyer (owner) is deleted, all their campaigns are reassigned to a designated system owner account; no campaigns are orphaned.
+- Archived campaigns are view-only: visible in listing and detail but not editable (no field changes or ownership transfer).
+- Budget may be zero (allowed); negative values are rejected by validation.
 - How many ad groups / creatives can a single campaign hold before performance degrades noticeably?
-- What happens when a user clears all columns in column-setup — does a minimum of one column remain?
-- What happens when two users try to transfer the same campaign's ownership simultaneously?
+- Column-setup enforces at least one visible column; the user cannot hide the last remaining column.
+- Concurrent edits: when saving a campaign (including ownership transfer), if the campaign was updated since the user loaded it, the save is rejected with a clear message; the user must refresh and retry (optimistic locking).
 
 ---
 
@@ -118,12 +130,15 @@ The campaign listing page provides a table of campaigns. The buyer sees only the
 - **FR-004**: Admins MUST be able to see all campaigns and filter the listing by owner.
 
 **Campaign Lifecycle**
-- **FR-005**: System MUST allow buyers and admins to create campaigns with: name (required), budget (required, positive number), and status (active, pause, archive).
+- **FR-005**: System MUST allow buyers and admins to create campaigns with: name (required), budget (required, non-negative number; zero allowed, negative rejected), and status (active, pause, archive).
 - **FR-006**: System MUST automatically set the authenticated user as the campaign owner on creation.
 - **FR-007**: Only the campaign owner (or an admin) MUST be able to edit or delete a campaign.
 - **FR-008**: Only the campaign owner MUST be able to transfer campaign ownership to another user.
+- **FR-008c**: When saving campaign changes (including ownership transfer), the system MUST use optimistic locking: if the campaign was modified since the user loaded it, the save MUST be rejected with a message instructing the user to refresh and try again.
+- **FR-008b**: When a campaign owner (user) is deleted, the system MUST reassign all their campaigns to a designated system owner account; ownership MUST remain explicit (no orphaned campaigns).
 - **FR-009**: System MUST allow campaigns to be archived from the listing with a confirmation popup before the action is executed.
 - **FR-010**: Campaign status transitions MUST be: active ↔ pause, active/pause → archive (archive is one-way).
+- **FR-010b**: Archived campaigns MUST be view-only: listing and detail views are allowed; edit, ownership transfer, and ad group/creative changes are NOT allowed until the campaign is reactivated (if reactivation is in scope).
 
 **Ad Groups**
 - **FR-011**: Each campaign MUST support one or more ad groups.
@@ -140,7 +155,7 @@ The campaign listing page provides a table of campaigns. The buyer sees only the
 **Campaign Listing**
 - **FR-019**: The listing MUST support full-text search across all campaign fields (name, status, owner, budget).
 - **FR-020**: The listing MUST support multi-column sorting by up to two fields simultaneously.
-- **FR-021**: Users MUST be able to configure visible columns and their display order via a popup dialog.
+- **FR-021**: Users MUST be able to configure visible columns and their display order via a popup dialog; at least one column MUST remain visible (UI or validation prevents hiding the last column).
 - **FR-022**: Column configuration MUST be saved per user and restored on next login.
 - **FR-023**: Each listing row MUST include an "Edit" button that navigates to the campaign edit page.
 - **FR-024**: Each listing row MUST include an "Archive" action that triggers a confirmation popup before archiving.
@@ -152,6 +167,7 @@ The campaign listing page provides a table of campaigns. The buyer sees only the
 - **Ad Group**: Parent campaign reference, country targets, platform targets, browser targets, timezone targets, SSP ID whitelist, SSP ID blacklist, source ID whitelist, source ID blacklist.
 - **Creative**: Parent ad group reference, name, ad type, click URL, icon (media reference), image (media reference).
 - **Column Configuration**: User reference, listing context (campaigns), ordered list of visible column identifiers. Persists per user.
+- **Designated system owner**: A single system or user account used as the fallback owner when a campaign owner is deleted; all reassigned campaigns point to this account until an admin reassigns them.
 
 ---
 
@@ -177,4 +193,4 @@ The campaign listing page provides a table of campaigns. The buyer sees only the
 - Archiving is irreversible from the UI; no "un-archive" functionality is in scope for this feature.
 - The "buyer" role has the same authentication mechanism as existing roles (session-based).
 - White/blacklists for SSP ID and source ID accept comma-separated or newline-separated ID values.
-- Deleted users' campaigns are reassigned to an admin as a fallback owner (assumption; may need clarification in planning).
+- Deleted users' campaigns are reassigned to a designated system owner account (see Clarifications).

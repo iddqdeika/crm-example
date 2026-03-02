@@ -51,6 +51,7 @@ async def signup(
         user_agent=request.headers.get("user-agent"),
         session_cache=cache,
     )
+    await db.commit()
     res = JSONResponse(content={"message": "User created"}, status_code=status.HTTP_201_CREATED)
     _set_session_cookie(res, str(session.id))
     return res
@@ -76,6 +77,7 @@ async def login(
         user_agent=request.headers.get("user-agent"),
         session_cache=cache,
     )
+    await db.commit()
     res = JSONResponse(content={"message": "OK"}, status_code=status.HTTP_200_OK)
     _set_session_cookie(res, str(session.id))
     return res

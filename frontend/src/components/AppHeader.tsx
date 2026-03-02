@@ -11,6 +11,9 @@ export default function AppHeader() {
       <nav className="app-header__nav">
         <Link to="/dashboard" className="app-header__link">Dashboard</Link>
         <Link to="/profile" className="app-header__link">Profile</Link>
+        {(profile?.role === "admin" || profile?.role === "buyer") && (
+          <Link to="/campaigns" className="app-header__link" data-testid="header-campaigns-link">Campaigns</Link>
+        )}
         {profile?.role === "admin" && (
           <Link to="/admin" className="app-header__link" data-testid="header-admin-link">Admin</Link>
         )}

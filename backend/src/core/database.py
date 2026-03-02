@@ -13,6 +13,10 @@ from models.user import User  # noqa: F401 - register model
 from models.session import AuthenticationSession  # noqa: F401 - register model
 from models.profile import Profile  # noqa: F401 - register model
 from models.avatar import Avatar  # noqa: F401 - register model
+from models.ad_group import AdGroup  # noqa: F401 - register model
+from models.campaign import Campaign  # noqa: F401 - register model
+from models.column_config import ColumnConfiguration  # noqa: F401 - register model
+from models.creative import Creative  # noqa: F401 - register model
 
 _settings = get_settings()
 engine = create_async_engine(

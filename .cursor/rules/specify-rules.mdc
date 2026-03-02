@@ -10,6 +10,12 @@ Auto-generated from all feature plans. Last updated: 2026-02-26
 - PostgreSQL (metadata), MinIO/S3 (binary objects) (004-media-persistence)
 - Python 3.12 (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy async, `redis[asyncio]>=5.0` (new), Alembic, React Router v6 (005-session-persistence)
 - PostgreSQL (authoritative session records), Redis (session cache — hot path) (005-session-persistence)
+- Python 3.12 (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy async, React Router v6, existing auth and media (MinIO) stack (006-campaign-management)
+- PostgreSQL (campaigns, ad groups, creatives, column config); existing MinIO for creative icon/image blobs (006-campaign-management)
+- Python 3.13 (backend), TypeScript (frontend) + FastAPI, React, Vite, Nginx (007-separate-api-routes)
+- PostgreSQL (unchanged) (007-separate-api-routes)
+- TypeScript (Playwright Test framework) + `@playwright/test` (already installed in `frontend/package.json`) (008-playwright-ui-tests)
+- N/A — tests operate against the running application's PostgreSQL via the UI (008-playwright-ui-tests)
 
 - Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React + FastAPI, SQLAlchemy, Alembic, Uvicorn, PostgreSQL, React, React Router, React Testing Library (001-adtech-auth-profile)
 
@@ -30,9 +36,9 @@ cd src; pytest; ruff check .
 Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React: Follow standard conventions
 
 ## Recent Changes
-- 005-session-persistence: Added Python 3.12 (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy async, `redis[asyncio]>=5.0` (new), Alembic, React Router v6
-- 004-media-persistence: Added Python 3.12 (backend), TypeScript / React 18 (frontend — no changes) + FastAPI, SQLAlchemy async, `boto3` (S3 client), MinIO Docker image
-- 003-fix-ui-design-pages: Added TypeScript ~5.6.2, React 18.3.1 + Vite 5.4.10, React Router DOM 6.28.0
+- 008-playwright-ui-tests: Added TypeScript (Playwright Test framework) + `@playwright/test` (already installed in `frontend/package.json`)
+- 007-separate-api-routes: Added Python 3.13 (backend), TypeScript (frontend) + FastAPI, React, Vite, Nginx
+- 006-campaign-management: Added Python 3.12 (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy async, React Router v6, existing auth and media (MinIO) stack
 
 
 <!-- MANUAL ADDITIONS START -->

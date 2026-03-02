@@ -1,0 +1,98 @@
+name: qualityboard-e2e
+
+services:
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 minioadmin minioadmin &&
+        mc rb --force local/qualityboard-media 2>/dev/null || true &&
+        mc mb local/qualityboard-media &&
+        mc anonymous set none local/qualityboard-media &&
+        echo 'Bucket cleaned and ready.'
+      "
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: qualityboard_e2e
+    volumes:
+      - e2e_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:changeme@postgres:5432/qualityboard_e2e
+      SECRET_KEY: e2e-test-secret-key-min-32-characters-long
+      APP_ENV: development
+      STORAGE_ENDPOINT_URL: http://minio:9000
+      STORAGE_PUBLIC_URL: http://localhost:9000
+      STORAGE_ACCESS_KEY: minioadmin
+      STORAGE_SECRET_KEY: minioadmin
+      STORAGE_BUCKET: qualityboard-media
+      REDIS_URL: redis://redis:6379
+      SESSION_INACTIVITY_TIMEOUT: 1800
+      SESSION_MAX_LIFETIME: 28800
+      SESSION_WARNING_SECONDS: 300
+      SEED_ADMIN: "true"
+      SEED_ADMIN_EMAIL: admin@e2e-admin.example.com
+      SEED_ADMIN_PASSWORD: AdminPass1!
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  e2e_postgres_data:

@@ -11,6 +11,7 @@ from .base import Base
 class UserRole(str, enum.Enum):
     standard = "standard"
     admin = "admin"
+    buyer = "buyer"
 
 
 class User(Base):

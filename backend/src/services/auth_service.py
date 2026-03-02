@@ -28,7 +28,7 @@ async def create_user(
     email: str,
     password: str,
     display_name: str,
-    role: UserRole = UserRole.standard,
+    role: UserRole = UserRole.buyer,
 ) -> User:
     email_lower = email.lower().strip()
     user = User(

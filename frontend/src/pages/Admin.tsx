@@ -15,7 +15,7 @@ export default function Admin() {
     if (profile?.role !== "admin") return;
     let cancelled = false;
     adminApi
-      .listUsers()
+      .listUsers({ page_size: 100 })
       .then((r) => {
         if (!cancelled) {
           setUsers(r.items);
@@ -59,7 +59,7 @@ export default function Admin() {
           onClose={() => setSelected(null)}
           onUpdated={() => {
             setSelected(null);
-            adminApi.listUsers().then((r) => setUsers(r.items));
+            adminApi.listUsers({ page_size: 100 }).then((r) => setUsers(r.items));
           }}
         />
       )}
@@ -103,6 +103,7 @@ function AdminUserDetail({
           data-testid="admin-edit-role"
         >
           <option value="standard">standard</option>
+          <option value="buyer">buyer</option>
           <option value="admin">admin</option>
         </select>
       </label>

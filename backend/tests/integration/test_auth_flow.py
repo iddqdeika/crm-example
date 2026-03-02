@@ -11,7 +11,7 @@ async def test_signup_then_login(client: AsyncClient) -> None:
     display_name = "Flow User"
 
     signup = await client.post(
-        "/auth/signup",
+        "/api/auth/signup",
         json={"email": email, "password": password, "display_name": display_name},
     )
     if signup.status_code == 404:
@@ -19,7 +19,7 @@ async def test_signup_then_login(client: AsyncClient) -> None:
     assert signup.status_code == 201, signup.text
 
     login = await client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={"email": email, "password": password},
     )
     assert login.status_code == 200, login.text

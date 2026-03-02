@@ -12,6 +12,10 @@ from app.main import app
 from core.database import get_db
 from core.session_cache import FakeSessionCache, get_session_cache
 from models.base import Base
+from models.ad_group import AdGroup  # noqa: F401 - register for create_all
+from models.campaign import Campaign  # noqa: F401 - register for create_all
+from models.column_config import ColumnConfiguration  # noqa: F401 - register for create_all
+from models.creative import Creative  # noqa: F401 - register for create_all
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 
@@ -85,5 +89,5 @@ async def admin_user(db_session: AsyncSession) -> tuple[str, str]:
 async def admin_client(client: AsyncClient, admin_user: tuple[str, str]) -> AsyncClient:
     """Client with session authenticated as admin."""
     email, password = admin_user
-    await client.post("/auth/login", json={"email": email, "password": password})
+    await client.post("/api/auth/login", json={"email": email, "password": password})
     return client

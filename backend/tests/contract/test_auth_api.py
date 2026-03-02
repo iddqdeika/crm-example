@@ -7,7 +7,7 @@ from httpx import AsyncClient
 async def test_signup_request_response_shape(client: AsyncClient) -> None:
     """POST /auth/signup accepts email, password, display_name; returns 201 or 4xx."""
     r = await client.post(
-        "/auth/signup",
+        "/api/auth/signup",
         json={
             "email": "user@example.com",
             "password": "SecurePass1!",
@@ -33,8 +33,8 @@ async def test_signup_conflict_when_email_exists(client: AsyncClient) -> None:
         "password": "SecurePass1!",
         "display_name": "Dup",
     }
-    await client.post("/auth/signup", json=payload)
-    r2 = await client.post("/auth/signup", json=payload)
+    await client.post("/api/auth/signup", json=payload)
+    r2 = await client.post("/api/auth/signup", json=payload)
     assert r2.status_code in (409, 404)
 
 
@@ -42,7 +42,7 @@ async def test_signup_conflict_when_email_exists(client: AsyncClient) -> None:
 async def test_login_request_response_shape(client: AsyncClient) -> None:
     """POST /auth/login accepts email, password; returns 200 or 4xx."""
     r = await client.post(
-        "/auth/login",
+        "/api/auth/login",
         json={"email": "any@example.com", "password": "any"},
     )
     assert r.status_code in (200, 401, 404)
@@ -57,5 +57,5 @@ async def test_login_request_response_shape(client: AsyncClient) -> None:
 @pytest.mark.asyncio
 async def test_logout_requires_auth(client: AsyncClient) -> None:
     """POST /auth/logout without session returns 204 or 401."""
-    r = await client.post("/auth/logout")
+    r = await client.post("/api/auth/logout")
     assert r.status_code in (204, 401, 404)
