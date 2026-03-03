@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     storage_secret_key: str = "minioadmin"
     storage_bucket: str = "qualityboard-media"
 
+    # Meilisearch
+    meilisearch_url: str = "http://localhost:7700"
+    meilisearch_api_key: str = "changeme-dev-key"
+
 
 def get_settings() -> Settings:
     return Settings()

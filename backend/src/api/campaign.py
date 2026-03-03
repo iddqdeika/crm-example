@@ -174,7 +174,38 @@ async def post_campaign(
         body.budget,
         body.status,
     )
-    return _to_response(campaign, [])  # new campaign, no ad groups yet
+    ag_with_cr: list[tuple] = []
+    if body.ad_groups:
+        for ag_data in body.ad_groups:
+            new_ag = await create_ad_group(
+                db,
+                campaign.id,
+                country_targets=ag_data.country_targets,
+                platform_targets=ag_data.platform_targets,
+                browser_targets=ag_data.browser_targets,
+                timezone_targets=ag_data.timezone_targets,
+                ssp_id_whitelist=ag_data.ssp_id_whitelist,
+                ssp_id_blacklist=ag_data.ssp_id_blacklist,
+                source_id_whitelist=ag_data.source_id_whitelist,
+                source_id_blacklist=ag_data.source_id_blacklist,
+                sort_order=ag_data.sort_order,
+            )
+            creatives = []
+            for cr_data in ag_data.creatives:
+                new_cr = await create_creative(
+                    db,
+                    new_ag.id,
+                    name=cr_data.name,
+                    ad_type=cr_data.ad_type,
+                    click_url=cr_data.click_url,
+                    icon_storage_path=cr_data.icon_storage_path,
+                    image_storage_path=cr_data.image_storage_path,
+                    sort_order=cr_data.sort_order,
+                )
+                creatives.append(new_cr)
+            ag_with_cr.append((new_ag, creatives))
+    await db.commit()
+    return _to_response(campaign, ag_with_cr)
 
 
 @router.patch("/{campaign_id}", response_model=CampaignResponse)

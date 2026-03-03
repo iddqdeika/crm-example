@@ -39,7 +39,8 @@ test.describe("US2: Campaign Creation and Listing", () => {
     await page.getByRole("button", { name: /create/i }).click();
 
     await expect(page).toHaveURL(/\/campaigns\/[0-9a-f-]+/, { timeout: 10_000 });
-    await expect(page.getByLabel("Name")).toHaveValue(campaignName);
+    await expect(page.getByRole("heading", { name: "Edit campaign" })).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("#campaign-name")).toHaveValue(campaignName);
   });
 
   test("new campaign visible in listing after creation", async ({ page }) => {
@@ -74,5 +75,37 @@ test.describe("US2: Campaign Creation and Listing", () => {
     await page.getByLabel("Status").selectOption("active");
     await page.getByRole("button", { name: /create/i }).click();
     await expect(page).toHaveURL(/\/campaigns\/new/);
+  });
+
+  test("E34: create campaign with ad group and creative → persisted on edit page", async ({ page }) => {
+    await login(page, buyerEmail, PASSWORD);
+    await page.goto("/campaigns/new");
+
+    const campaignName = `AG Campaign ${Date.now()}`;
+    await page.getByLabel("Name").fill(campaignName);
+    await page.getByLabel("Budget").fill("750");
+
+    // Add an ad group (on new page it starts expanded; do not click header or we collapse it)
+    await page.getByTestId("add-ad-group").click();
+    await expect(page.getByTestId("ad-group-block")).toBeVisible();
+    await expect(page.getByLabel("Country targets")).toBeVisible({ timeout: 5_000 });
+
+    // Fill country targets
+    await page.getByLabel("Country targets").fill("US");
+
+    // Add a creative
+    await page.getByTestId("add-creative").click();
+    await page.getByRole("textbox", { name: /creative name/i }).fill("Banner Ad");
+
+    // Submit
+    await page.getByRole("button", { name: /^create$/i }).click();
+    await expect(page).toHaveURL(/\/campaigns\/[0-9a-f-]+/, { timeout: 10_000 });
+
+    // Verify ad group persisted
+    await expect(page.getByTestId("ad-group-block")).toBeVisible();
+    // Expand to see fields
+    await page.getByTestId("ad-group-block").getByRole("button", { name: /ad group 1/i }).click();
+    await expect(page.getByLabel("Country targets")).toHaveValue("US");
+    await expect(page.getByRole("textbox", { name: /creative name/i })).toHaveValue("Banner Ad");
   });
 });

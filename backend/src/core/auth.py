@@ -106,3 +106,39 @@ async def get_current_user(
             detail="User not found or inactive",
         )
     return user
+
+
+async def get_optional_user(
+    session_id: str | None = Depends(cookie_scheme),
+    db: AsyncSession = Depends(get_db),
+    cache: SessionCache = Depends(get_session_cache),
+) -> User | None:
+    """Like get_current_user but returns None instead of raising 401 for unauthenticated requests."""
+    if not session_id:
+        return None
+    try:
+        sid = UUID(session_id)
+    except ValueError:
+        return None
+
+    cache_entry = await _validate_session_from_cache(sid, cache)
+    if cache_entry is not None:
+        user_result = await db.execute(select(User).where(User.id == cache_entry.user_id))
+        user = user_result.scalar_one_or_none()
+        return user if (user and user.is_active) else None
+
+    now = datetime.utcnow()
+    result = await db.execute(
+        select(AuthenticationSession)
+        .where(AuthenticationSession.id == sid)
+        .where(AuthenticationSession.revoked_at.is_(None))
+        .where(AuthenticationSession.expires_at > now)
+        .where(AuthenticationSession.absolute_expires_at > now)
+    )
+    session = result.scalar_one_or_none()
+    if not session:
+        return None
+
+    user_result = await db.execute(select(User).where(User.id == session.user_id))
+    user = user_result.scalar_one_or_none()
+    return user if (user and user.is_active) else None

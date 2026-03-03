@@ -13,6 +13,8 @@ from core.database import get_db
 from core.session_cache import FakeSessionCache, get_session_cache
 from models.base import Base
 from models.ad_group import AdGroup  # noqa: F401 - register for create_all
+from models.blog_post import BlogPost  # noqa: F401 - register for create_all
+from models.blog_slug_history import BlogSlugHistory  # noqa: F401 - register for create_all
 from models.campaign import Campaign  # noqa: F401 - register for create_all
 from models.column_config import ColumnConfiguration  # noqa: F401 - register for create_all
 from models.creative import Creative  # noqa: F401 - register for create_all
@@ -52,6 +54,25 @@ def fake_cache() -> FakeSessionCache:
 
 @pytest_asyncio.fixture
 async def client(db_session: AsyncSession, fake_cache: FakeSessionCache) -> AsyncGenerator[AsyncClient, None]:
+    async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
+        yield db_session
+
+    def override_get_session_cache() -> FakeSessionCache:
+        return fake_cache
+
+    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_session_cache] = override_get_session_cache
+    async with AsyncClient(
+        transport=ASGITransport(app=app),
+        base_url="http://test",
+    ) as ac:
+        yield ac
+    app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def public_client(db_session: AsyncSession, fake_cache: FakeSessionCache) -> AsyncGenerator[AsyncClient, None]:
+    """Unauthenticated client (same app/db as client, no login). Use for public list/GET."""
     async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
         yield db_session
 

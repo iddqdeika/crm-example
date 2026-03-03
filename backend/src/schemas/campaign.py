@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from models.campaign import CampaignStatus
 
@@ -102,10 +102,41 @@ class AdGroupUpsert(BaseModel):
     creatives: list[CreativeUpsert] | None = None
 
 
+class CreativeCreateNested(BaseModel):
+    """Creative nested inside CampaignCreate — no id allowed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(..., min_length=1, max_length=255)
+    ad_type: str = Field(..., max_length=64)
+    click_url: str | None = None
+    icon_storage_path: str | None = None
+    image_storage_path: str | None = None
+    sort_order: int = 0
+
+
+class AdGroupCreateNested(BaseModel):
+    """Ad group nested inside CampaignCreate — no id allowed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    country_targets: str | None = None
+    platform_targets: str | None = None
+    browser_targets: str | None = None
+    timezone_targets: str | None = None
+    ssp_id_whitelist: str | None = None
+    ssp_id_blacklist: str | None = None
+    source_id_whitelist: str | None = None
+    source_id_blacklist: str | None = None
+    sort_order: int = 0
+    creatives: list[CreativeCreateNested] = []
+
+
 class CampaignCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     budget: Decimal = Field(..., ge=0)
     status: CampaignStatus = CampaignStatus.active
+    ad_groups: list[AdGroupCreateNested] | None = None
 
 
 class CampaignUpdate(BaseModel):

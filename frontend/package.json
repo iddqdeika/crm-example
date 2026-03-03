@@ -13,12 +13,18 @@
     "e2e:up": "docker compose -f ../docker/docker-compose.e2e.yml up -d --build --wait",
     "e2e:down": "docker compose -f ../docker/docker-compose.e2e.yml down -v",
     "e2e:test": "npx playwright test",
+    "seed:blog": "node scripts/seed-adtech-blog-posts.mjs",
     "lint": "eslint . --ext ts,tsx",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
   },
   "dependencies": {
+    "@tiptap/extension-image": "^3.20.0",
+    "@tiptap/extension-link": "^3.20.0",
+    "@tiptap/react": "^3.20.0",
+    "@tiptap/starter-kit": "^3.20.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {

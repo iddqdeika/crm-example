@@ -38,6 +38,17 @@
   --space-xl: 6rem;
 }
 
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none !important;
+  }
+}
+
 * { box-sizing: border-box; }
 
 body {

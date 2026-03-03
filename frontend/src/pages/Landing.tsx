@@ -1,7 +1,20 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BlogPostCard from "../components/BlogPostCard";
+import { blogApi, type BlogPostSummaryDto } from "../services/api";
 import "./Landing.css";
 
 export default function Landing() {
+  const [latestPosts, setLatestPosts] = useState<BlogPostSummaryDto[]>([]);
+
+  useEffect(() => {
+    blogApi.list({ limit: 3 }).then((data) => {
+      if ("items" in data) {
+        setLatestPosts(data.items as BlogPostSummaryDto[]);
+      }
+    }).catch(() => {});
+  }, []);
+
   return (
     <div className="landing">
       <header className="landing__hero">
@@ -41,6 +54,22 @@ export default function Landing() {
           </article>
         </div>
       </section>
+
+      {(latestPosts.length > 0) && (
+        <section className="landing__blog" aria-label="Latest blog posts" data-testid="landing-blog-section">
+          <div className="landing__blog-header">
+            <h2 className="landing__blog-heading">From our blog</h2>
+            <Link to="/blog" className="landing__blog-see-all">See all posts</Link>
+          </div>
+          <ul className="landing__blog-grid" role="list">
+            {latestPosts.map((post) => (
+              <li key={post.id}>
+                <BlogPostCard {...post} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="landing__cta" aria-label="Get started">
         <h2 className="landing__cta-heading">Let's check it</h2>

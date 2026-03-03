@@ -69,6 +69,8 @@ services:
       SEED_ADMIN: "true"
       SEED_ADMIN_EMAIL: admin@e2e-admin.example.com
       SEED_ADMIN_PASSWORD: AdminPass1!
+      MEILISEARCH_URL: http://meilisearch:7700
+      MEILISEARCH_API_KEY: e2e-meili-master-key
     ports:
       - "8000:8000"
     depends_on:
@@ -77,6 +79,8 @@ services:
       minio:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      meilisearch:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
@@ -93,6 +97,17 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    environment:
+      MEILI_MASTER_KEY: e2e-meili-master-key
+      MEILI_ENV: development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   e2e_postgres_data:

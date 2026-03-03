@@ -1,9 +1,13 @@
 """FastAPI application entry point."""
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import APIRouter, FastAPI
 from fastapi.exceptions import RequestValidationError
 
 from api.admin import router as admin_router
 from api.auth import router as auth_router
+from api.blog import router as blog_router
 from api.campaign import router as campaign_router
 from api.column_config import router as column_config_router
 from api.profile import router as profile_router
@@ -14,12 +18,32 @@ from core.logging import (
 )
 
 setup_logging()
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    try:
+        from core.database import async_session_factory
+        from services import blog_service
+        from services.blog_search_service import get_search_service
+
+        search = get_search_service()
+        search.ensure_index_configured()
+        async with async_session_factory() as db:
+            count = await blog_service.rebuild_search_index(db, search)
+            logger.info("Blog search index rebuilt on startup: %d documents indexed", count)
+    except Exception:
+        logger.warning("Meilisearch: could not configure or rebuild index on startup", exc_info=True)
+    yield
+
 
 app = FastAPI(
     title="Qualityboard API",
     version="0.1.0",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
+    lifespan=lifespan,
 )
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
@@ -30,6 +54,7 @@ api_router.include_router(profile_router)
 api_router.include_router(campaign_router)
 api_router.include_router(column_config_router)
 api_router.include_router(admin_router)
+api_router.include_router(blog_router)
 
 
 @api_router.get("/health")

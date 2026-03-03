@@ -1,0 +1,173 @@
+.blog-manage {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.blog-manage__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.blog-manage__heading {
+  font-family: "Syne", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #f5f5f5;
+  margin: 0;
+}
+
+.blog-manage__new-btn {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.55rem 1.25rem;
+  background: #b57bee;
+  color: #0d0d0d;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.blog-manage__new-btn:hover { opacity: 0.88; }
+
+.blog-manage__toolbar {
+  margin-bottom: 1.5rem;
+}
+
+.blog-manage__search {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f5f5f5;
+  width: 280px;
+  outline: none;
+}
+
+.blog-manage__search:focus { border-color: #b57bee; }
+
+.blog-manage__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+}
+
+.blog-manage__th {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  color: rgba(245, 245, 245, 0.5);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.blog-manage__th--sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.blog-manage__th--sortable:hover { color: #b57bee; }
+
+.blog-manage__row:hover td { background: rgba(255, 255, 255, 0.03); }
+
+.blog-manage__td {
+  padding: 0.75rem;
+  color: rgba(245, 245, 245, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+}
+
+.blog-manage__td--title {
+  color: #f5f5f5;
+  font-weight: 500;
+  max-width: 400px;
+}
+
+.blog-manage__td--actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.blog-manage__empty {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(245, 245, 245, 0.35);
+}
+
+.blog-manage__loading {
+  font-family: "Outfit", sans-serif;
+  color: rgba(245, 245, 245, 0.4);
+}
+
+.blog-manage__action-btn {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(245, 245, 245, 0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.blog-manage__action-btn:hover { background: rgba(255, 255, 255, 0.07); }
+
+.blog-manage__action-btn--edit { color: #b57bee; border-color: rgba(181, 123, 238, 0.35); }
+.blog-manage__action-btn--edit:hover { background: rgba(181, 123, 238, 0.1); }
+
+.blog-manage__action-btn--delete { color: #e05f5f; border-color: rgba(224, 95, 95, 0.35); }
+.blog-manage__action-btn--delete:hover { background: rgba(224, 95, 95, 0.1); }
+
+.blog-manage__pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+  color: rgba(245, 245, 245, 0.6);
+}
+
+.blog-manage__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.blog-manage__modal {
+  background: #1a1a2e;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.blog-manage__modal-text {
+  font-family: "Outfit", sans-serif;
+  color: rgba(245, 245, 245, 0.85);
+  margin: 0;
+}
+
+.blog-manage__modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}

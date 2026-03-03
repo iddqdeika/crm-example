@@ -1,3 +1,4 @@
+import "./ColumnSetupPopup.css";
 import { useEffect, useState } from "react";
 
 export type ColumnDef = {
@@ -50,41 +51,44 @@ export default function ColumnSetupPopup({ allColumns, activeColumnIds, onSave, 
   const label = (colId: string) => allColumns.find((c) => c.id === colId)?.label ?? colId;
 
   return (
-    <div className="column-setup-popup" data-testid="column-setup-popup" role="dialog" aria-label="Column setup">
-      <h3>Column setup</h3>
-      <ul data-testid="column-list">
-        {selected.map((colId, idx) => (
-          <li key={colId} data-testid="column-item">
-            <label>
-              <input
-                type="checkbox"
-                checked
-                onChange={() => toggle(colId)}
-                disabled={selected.length <= 1}
-              />
-              {label(colId)}
-            </label>
-            <button type="button" onClick={() => moveUp(idx)} disabled={idx === 0} aria-label={`Move ${label(colId)} up`}>Up</button>
-            <button type="button" onClick={() => moveDown(idx)} disabled={idx === selected.length - 1} aria-label={`Move ${label(colId)} down`}>Down</button>
-          </li>
-        ))}
-      </ul>
-      <h4>Available columns</h4>
-      <ul>
-        {allColumns
-          .filter((c) => !selected.includes(c.id))
-          .map((c) => (
-            <li key={c.id}>
-              <label>
-                <input type="checkbox" checked={false} onChange={() => toggle(c.id)} />
-                {c.label}
+    <div className="column-setup-popup__overlay" data-testid="column-setup-popup" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="column-setup-popup__modal" role="dialog" aria-label="Column setup">
+        <h3 className="column-setup-popup__heading">Column setup</h3>
+        <ul className="column-setup-popup__list" data-testid="column-list">
+          {selected.map((colId, idx) => (
+            <li key={colId} className="column-setup-popup__item" data-testid="column-item">
+              <label className="column-setup-popup__item-label">
+                <input
+                  type="checkbox"
+                  className="column-setup-popup__checkbox"
+                  checked
+                  onChange={() => toggle(colId)}
+                  disabled={selected.length <= 1}
+                />
+                {label(colId)}
               </label>
+              <button type="button" className="column-setup-popup__order-btn" onClick={() => moveUp(idx)} disabled={idx === 0} aria-label={`Move ${label(colId)} up`}>↑</button>
+              <button type="button" className="column-setup-popup__order-btn" onClick={() => moveDown(idx)} disabled={idx === selected.length - 1} aria-label={`Move ${label(colId)} down`}>↓</button>
             </li>
           ))}
-      </ul>
-      <div className="column-setup-popup__actions">
-        <button type="button" onClick={() => onSave(selected)} data-testid="column-setup-save">Save</button>
-        <button type="button" onClick={onClose}>Cancel</button>
+        </ul>
+        <h4 className="column-setup-popup__subheading">Available columns</h4>
+        <ul className="column-setup-popup__list">
+          {allColumns
+            .filter((c) => !selected.includes(c.id))
+            .map((c) => (
+              <li key={c.id} className="column-setup-popup__item">
+                <label className="column-setup-popup__item-label">
+                  <input type="checkbox" className="column-setup-popup__checkbox" checked={false} onChange={() => toggle(c.id)} />
+                  {c.label}
+                </label>
+              </li>
+            ))}
+        </ul>
+        <div className="column-setup-popup__actions">
+          <button type="button" className="column-setup-popup__save-btn" onClick={() => onSave(selected)} data-testid="column-setup-save">Save</button>
+          <button type="button" className="column-setup-popup__cancel-btn" onClick={onClose}>Cancel</button>
+        </div>
       </div>
     </div>
   );

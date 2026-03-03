@@ -1,0 +1,17 @@
+.blog-auth-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.blog-auth-links__link {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+  color: #b57bee;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.blog-auth-links__link:hover {
+  text-decoration: underline;
+}

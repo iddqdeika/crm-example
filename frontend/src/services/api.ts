@@ -177,7 +177,7 @@ export const campaignApi = {
   async get(id: string) {
     return request<CampaignDetail>(`/campaigns/${id}`);
   },
-  async create(data: { name: string; budget: number; status: string }) {
+  async create(data: { name: string; budget: number; status: string; ad_groups?: AdGroupUpsert[] }) {
     return request<CampaignDetail>("/campaigns", {
       method: "POST",
       body: JSON.stringify(data),
@@ -215,6 +215,145 @@ export const columnConfigApi = {
       method: "PUT",
       body: JSON.stringify({ context, column_ids }),
     });
+  },
+};
+
+export type BlogPostSummaryDto = {
+  id: string;
+  title: string;
+  body_excerpt: string;
+  author_display: string;
+  created_at: string;
+  updated_at: string;
+  is_edited: boolean;
+  slug?: string | null;
+  status?: string;
+};
+
+export type BlogPostDetailDto = {
+  id: string;
+  title: string;
+  body: string;
+  author_display: string;
+  creator_id: string;
+  creator_display_name: string;
+  created_at: string;
+  updated_at: string;
+  is_edited: boolean;
+  slug?: string | null;
+  status?: string;
+  seo_title?: string | null;
+  meta_description?: string | null;
+};
+
+export type BlogSearchHitDto = {
+  id: string;
+  title: string;
+  body_snippet: string;
+  author_display: string;
+  created_at_ts: number;
+  is_search_result: true;
+  slug?: string;
+};
+
+export const blogApi = {
+  async list(params?: {
+    q?: string;
+    search?: string;
+    sort_by?: string;
+    sort_dir?: string;
+    limit?: number;
+    page?: number;
+  }) {
+    const sp = new URLSearchParams();
+    if (params?.q) sp.set("q", params.q);
+    if (params?.search) sp.set("search", params.search);
+    if (params?.sort_by) sp.set("sort_by", params.sort_by);
+    if (params?.sort_dir) sp.set("sort_dir", params.sort_dir);
+    if (params?.limit != null) sp.set("limit", String(params.limit));
+    if (params?.page != null) sp.set("page", String(params.page));
+    const qs = sp.toString();
+    return request<
+      | { items: BlogPostSummaryDto[]; total: number }
+      | { items: BlogSearchHitDto[]; total: number }
+    >(`/blog/posts${qs ? `?${qs}` : ""}`);
+  },
+  async get(id: string) {
+    return request<BlogPostDetailDto>(`/blog/posts/${id}`);
+  },
+  /** Fetch post by slug; if 301, returns { redirectSlug } so caller can navigate. */
+  async getBySlug(slug: string): Promise<BlogPostDetailDto | { redirectSlug: string }> {
+    const res = await fetch(`${API_BASE}/blog/posts/by-slug/${encodeURIComponent(slug)}`, {
+      credentials: "include",
+      redirect: "manual",
+    });
+    if (res.status === 301) {
+      const loc = res.headers.get("Location") || "";
+      const match = /\/blog\/post\/([^/]+)/.exec(loc);
+      if (match) return { redirectSlug: match[1] };
+    }
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      const e = new Error(err.detail ?? res.statusText);
+      (e as Error & { status?: number }).status = res.status;
+      throw e;
+    }
+    return res.json() as Promise<BlogPostDetailDto>;
+  },
+  async checkSlug(params: { slug: string; exclude_post_id?: string }) {
+    const sp = new URLSearchParams({ slug: params.slug });
+    if (params.exclude_post_id) sp.set("exclude_post_id", params.exclude_post_id);
+    return request<{ available: boolean; message?: string }>(
+      `/blog/posts/check-slug?${sp.toString()}`
+    );
+  },
+  async create(data: {
+    title: string;
+    body: string;
+    author?: string | null;
+    slug?: string | null;
+    status?: string;
+    seo_title?: string | null;
+    meta_description?: string | null;
+  }) {
+    return request<BlogPostDetailDto>("/blog/posts", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+  async update(
+    id: string,
+    data: {
+      title?: string;
+      body?: string;
+      author?: string | null;
+      slug?: string | null;
+      status?: string;
+      seo_title?: string | null;
+      meta_description?: string | null;
+    }
+  ) {
+    return request<BlogPostDetailDto>(`/blog/posts/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+  async remove(id: string) {
+    return request<void>(`/blog/posts/${id}`, { method: "DELETE" });
+  },
+  async uploadImage(file: File) {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`${API_BASE}/blog/images`, {
+      method: "POST",
+      credentials: "include",
+      body: form,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: res.statusText }));
+      throw new Error(err.detail ?? res.statusText);
+    }
+    return res.json() as Promise<{ url: string }>;
   },
 };
 

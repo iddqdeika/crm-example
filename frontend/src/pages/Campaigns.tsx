@@ -1,3 +1,4 @@
+import "./Campaigns.css";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { campaignApi, columnConfigApi, type CampaignSummary } from "../services/api";
@@ -12,11 +13,15 @@ const ALL_COLUMNS: ColumnDef[] = [
   { id: "updated_at", label: "Updated" },
 ];
 
-function cellValue(c: CampaignSummary, colId: string): string {
+function cellValue(c: CampaignSummary, colId: string): React.ReactNode {
   switch (colId) {
     case "name": return c.name;
     case "budget": return String(c.budget);
-    case "status": return c.status;
+    case "status": return (
+      <span className={`campaigns__status-badge campaigns__status-badge--${c.status}`}>
+        {c.status}
+      </span>
+    );
     case "owner": return c.owner_display_name ?? String(c.owner_id);
     case "created_at": return new Date(c.created_at).toLocaleDateString();
     case "updated_at": return new Date(c.updated_at).toLocaleDateString();
@@ -78,7 +83,6 @@ export default function Campaigns() {
       await campaignApi.update(c.id, { status: "archive", version: c.version });
       loadCampaigns();
     } catch {
-      // silently reload on error so user sees current state
       loadCampaigns();
     }
   };
@@ -90,19 +94,27 @@ export default function Campaigns() {
   };
 
   return (
-    <main className="page">
-      <h1>Campaigns</h1>
+    <main className="campaigns">
+      <h1 className="campaigns__heading">Campaigns</h1>
       <div className="campaigns__toolbar">
-        <Link to="/campaigns/new">Create campaign</Link>
+        <Link to="/campaigns/new" className="campaigns__create-btn">Create campaign</Link>
         <input
           type="search"
+          className="campaigns__search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search campaigns…"
           aria-label="Search campaigns"
           data-testid="campaign-search"
         />
-        <button type="button" onClick={() => setShowColumnSetup(true)} data-testid="column-setup-btn">Columns</button>
+        <button
+          type="button"
+          className="campaigns__columns-btn"
+          onClick={() => setShowColumnSetup(true)}
+          data-testid="column-setup-btn"
+        >
+          Columns
+        </button>
       </div>
       {showColumnSetup && (
         <ColumnSetupPopup
@@ -113,52 +125,88 @@ export default function Campaigns() {
         />
       )}
       {loading ? (
-        <p>Loading…</p>
-      ) : (
-        <table data-testid="campaign-table">
-          <thead>
-            <tr>
-              {columnIds.map((colId) => {
-                const def = ALL_COLUMNS.find((c) => c.id === colId);
-                return (
-                  <th
-                    key={colId}
-                    onClick={() => handleSort(colId)}
-                    style={{ cursor: SORTABLE_FIELDS.has(colId) ? "pointer" : "default" }}
-                    data-testid={`col-header-${colId}`}
-                  >
-                    {def?.label ?? colId}{sortIndicator(colId)}
-                  </th>
-                );
-              })}
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((c) => (
-              <tr key={c.id}>
-                {columnIds.map((colId) => (
-                  <td key={colId}>{cellValue(c, colId)}</td>
-                ))}
-                <td>
-                  <Link to={`/campaigns/${c.id}`}>Edit</Link>
-                  {c.status !== "archive" && (
-                    <button
-                      type="button"
-                      className="campaigns__archive-btn"
-                      data-testid={`archive-${c.id}`}
-                      onClick={() => handleArchive(c)}
-                    >
-                      Archive
-                    </button>
-                  )}
-                </td>
+        <div className="campaigns__table-wrapper">
+          <table className="campaigns__table" data-testid="campaign-table">
+            <thead>
+              <tr>
+                {columnIds.map((colId) => {
+                  const def = ALL_COLUMNS.find((c) => c.id === colId);
+                  return <th key={colId} className="campaigns__th">{def?.label ?? colId}</th>;
+                })}
+                <th className="campaigns__th"></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <tr key={i} className="campaigns__skeleton-row">
+                  {columnIds.map((colId) => (
+                    <td key={colId} className="campaigns__td">
+                      <span className="campaigns__skeleton-cell shimmer" />
+                    </td>
+                  ))}
+                  <td className="campaigns__td"><span className="campaigns__skeleton-cell shimmer" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="campaigns__table-wrapper">
+          <table className="campaigns__table" data-testid="campaign-table">
+            <thead>
+              <tr>
+                {columnIds.map((colId) => {
+                  const def = ALL_COLUMNS.find((c) => c.id === colId);
+                  return (
+                    <th
+                      key={colId}
+                      className={`campaigns__th${SORTABLE_FIELDS.has(colId) ? " campaigns__th--sortable" : ""}`}
+                      onClick={() => handleSort(colId)}
+                      data-testid={`col-header-${colId}`}
+                    >
+                      {def?.label ?? colId}{sortIndicator(colId)}
+                    </th>
+                  );
+                })}
+                <th className="campaigns__th"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.length === 0 ? (
+                <tr>
+                  <td colSpan={columnIds.length + 1} className="campaigns__td">
+                    <p className="campaigns__empty">No campaigns yet. Create your first one above.</p>
+                  </td>
+                </tr>
+              ) : (
+                items.map((c) => (
+                  <tr key={c.id} className="campaigns__tr">
+                    {columnIds.map((colId) => (
+                      <td key={colId} className={`campaigns__td${colId === "name" ? " campaigns__td--name" : ""}`}>
+                        {cellValue(c, colId)}
+                      </td>
+                    ))}
+                    <td className="campaigns__td campaigns__actions-cell">
+                      <Link to={`/campaigns/${c.id}`} className="campaigns__edit-link">Edit</Link>
+                      {c.status !== "archive" && (
+                        <button
+                          type="button"
+                          className="campaigns__archive-btn"
+                          data-testid={`archive-${c.id}`}
+                          onClick={() => handleArchive(c)}
+                        >
+                          Archive
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
-      {!loading && total > 0 && <p>Total: {total}</p>}
+      {!loading && total > 0 && <p className="campaigns__total">Total: {total}</p>}
     </main>
   );
 }

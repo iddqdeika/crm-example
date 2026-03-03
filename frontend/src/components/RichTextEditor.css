@@ -1,0 +1,53 @@
+.rich-text-editor {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.rich-text-editor__toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.rich-text-editor__btn {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(245, 245, 245, 0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rich-text-editor__btn:hover,
+.rich-text-editor__btn.is-active {
+  background: rgba(181, 123, 238, 0.2);
+  color: #b57bee;
+  border-color: rgba(181, 123, 238, 0.4);
+}
+
+.rich-text-editor__content {
+  min-height: 220px;
+  padding: 0.875rem 1rem;
+  outline: none;
+}
+
+.rich-text-editor__content .tiptap {
+  min-height: 200px;
+  outline: none;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.95rem;
+  color: rgba(245, 245, 245, 0.85);
+  line-height: 1.65;
+}
+
+.rich-text-editor__content .tiptap p { margin: 0 0 1em; }
+.rich-text-editor__content .tiptap h2 { font-family: "Syne", sans-serif; font-size: 1.3rem; margin: 1.5em 0 0.5em; color: #f5f5f5; }
+.rich-text-editor__content .tiptap img { max-width: 100%; border-radius: 6px; }
+.rich-text-editor__content .tiptap a { color: #b57bee; }

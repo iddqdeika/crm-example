@@ -12,6 +12,7 @@ class UserRole(str, enum.Enum):
     standard = "standard"
     admin = "admin"
     buyer = "buyer"
+    content_manager = "content_manager"
 
 
 class User(Base):

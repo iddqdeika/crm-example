@@ -104,6 +104,7 @@ function AdminUserDetail({
         >
           <option value="standard">standard</option>
           <option value="buyer">buyer</option>
+          <option value="content_manager">content_manager</option>
           <option value="admin">admin</option>
         </select>
       </label>

@@ -74,6 +74,8 @@ services:
       SESSION_INACTIVITY_TIMEOUT: ${SESSION_INACTIVITY_TIMEOUT:-1800}
       SESSION_MAX_LIFETIME: ${SESSION_MAX_LIFETIME:-28800}
       SESSION_WARNING_SECONDS: ${SESSION_WARNING_SECONDS:-300}
+      MEILISEARCH_URL: ${MEILISEARCH_URL:-http://meilisearch:7700}
+      MEILISEARCH_API_KEY: ${MEILISEARCH_MASTER_KEY:-changeme-dev-key}
     ports:
       - "8000:8000"
     depends_on:
@@ -82,6 +84,8 @@ services:
       minio:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      meilisearch:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
@@ -99,6 +103,22 @@ services:
       backend:
         condition: service_healthy
 
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    ports:
+      - "7700:7700"
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY:-changeme-dev-key}
+      MEILI_ENV: development
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   postgres_data:
   minio_data:
+  meilisearch_data:

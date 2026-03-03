@@ -1,0 +1,431 @@
+/* ======================================================
+   CampaignEditPage
+   BEM block: .campaign-edit
+   ====================================================== */
+
+.campaign-edit {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.campaign-edit__heading {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h2);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+/* ── Notices & Alerts ────────────────────────────────── */
+
+.campaign-edit__archived-notice {
+  display: block;
+  background-color: color-mix(in srgb, var(--color-accent-2) 10%, transparent);
+  border-left: 3px solid var(--color-accent-2);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  color: var(--color-text-primary);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: var(--space-md);
+}
+
+.campaign-edit__conflict {
+  background-color: color-mix(in srgb, var(--color-accent-3) 10%, transparent);
+  border: 1px solid var(--color-accent-3);
+  border-radius: 8px;
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.campaign-edit__conflict p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+}
+
+.campaign-edit__form-error {
+  color: var(--color-accent-2);
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  margin-top: var(--space-xs);
+}
+
+/* ── Form Fields ─────────────────────────────────────── */
+
+.campaign-edit__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.campaign-edit__label {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.campaign-edit__input,
+.campaign-edit__select {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-text-muted);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 44px;
+  width: 100%;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.campaign-edit__input:focus-visible,
+.campaign-edit__select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-3);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-3) 25%, transparent);
+}
+
+.campaign-edit__input:disabled,
+.campaign-edit__select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.campaign-edit__select option {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+/* ── Ad Groups Section ───────────────────────────────── */
+
+.campaign-edit__ad-groups {
+  margin-top: var(--space-lg);
+}
+
+.campaign-edit__ad-groups-heading {
+  font-family: var(--font-display);
+  font-size: var(--font-size-h3);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+/* ── Accordion ───────────────────────────────────────── */
+
+.campaign-edit__ad-group-block {
+  background-color: var(--color-bg-elevated);
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-text-muted) 30%, transparent);
+  margin-bottom: var(--space-md);
+  overflow: hidden;
+}
+
+.campaign-edit__ad-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+.campaign-edit__ad-group-header:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.campaign-edit__ad-group-header.is-expanded {
+  border-bottom: 1px solid var(--color-bg-secondary);
+}
+
+.campaign-edit__ad-group-header:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: -2px;
+}
+
+.campaign-edit__ad-group-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-small);
+}
+
+.campaign-edit__ad-group-toggle {
+  color: var(--color-accent-3);
+  font-size: var(--font-size-small);
+  transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-edit__ad-group-toggle {
+    transition: none;
+  }
+  .campaign-edit__ad-group-header {
+    transition: none;
+  }
+}
+
+.campaign-edit__ad-group-body {
+  display: none;
+  padding: var(--space-md);
+}
+
+.campaign-edit__ad-group-body.is-expanded {
+  display: block;
+}
+
+/* ── Ad Group Fields Grid ────────────────────────────── */
+
+.campaign-edit__ad-group-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .campaign-edit__ad-group-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Creatives ───────────────────────────────────────── */
+
+.campaign-edit__creatives {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-bg-secondary);
+}
+
+.campaign-edit__creatives-heading {
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--space-sm);
+}
+
+.campaign-edit__creative-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.campaign-edit__creative-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-text-muted);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 44px;
+}
+
+.campaign-edit__creative-input:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-3);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-3) 25%, transparent);
+}
+
+.campaign-edit__creative-input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.campaign-edit__creative-select {
+  min-width: 100px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-text-muted);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 44px;
+}
+
+.campaign-edit__creative-select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-3);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-3) 25%, transparent);
+}
+
+.campaign-edit__creative-select:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.campaign-edit__creative-select option {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 768px) {
+  .campaign-edit__creative-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+
+.campaign-edit__btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  border-radius: 6px;
+  padding: var(--space-xs) var(--space-md);
+  min-height: 44px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.campaign-edit__btn:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: 2px;
+}
+
+.campaign-edit__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.campaign-edit__btn--primary {
+  background-color: var(--color-accent-1);
+  color: var(--color-bg-primary);
+}
+
+.campaign-edit__btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--color-accent-1) 30%, transparent);
+}
+
+.campaign-edit__btn--secondary {
+  background: transparent;
+  border: 1px solid var(--color-text-muted);
+  color: var(--color-text-secondary);
+}
+
+.campaign-edit__btn--secondary:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.campaign-edit__btn--danger {
+  background: transparent;
+  border: 1px solid var(--color-accent-2);
+  color: var(--color-accent-2);
+}
+
+.campaign-edit__btn--danger:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--color-accent-2) 10%, transparent);
+}
+
+/* ── Form Actions ────────────────────────────────────── */
+
+.campaign-edit__form-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-bg-elevated);
+}
+
+/* ── Skeleton Loader ─────────────────────────────────── */
+
+.campaign-edit__skeleton {
+  margin-top: var(--space-md);
+}
+
+.campaign-edit__skeleton-field {
+  height: 56px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-elevated) 25%,
+    color-mix(in srgb, var(--color-text-muted) 15%, var(--color-bg-elevated)) 50%,
+    var(--color-bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  margin-bottom: var(--space-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-edit__skeleton-field {
+    animation: none;
+    background: var(--color-bg-elevated);
+  }
+}
+
+/* ── Back Link ───────────────────────────────────────── */
+
+.campaign-edit__back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  margin-top: var(--space-md);
+}
+
+.campaign-edit__back-link:hover {
+  color: var(--color-accent-3);
+}
+
+.campaign-edit__back-link:focus-visible {
+  outline: 2px solid var(--color-accent-3);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .campaign-edit {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .campaign-edit__form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .campaign-edit__btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .campaign-edit {
+    padding: var(--space-lg) var(--space-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-edit__btn--primary:hover:not(:disabled) {
+    transform: none;
+    box-shadow: none;
+  }
+}

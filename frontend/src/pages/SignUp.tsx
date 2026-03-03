@@ -17,6 +17,12 @@ export default function SignUp() {
     setError("");
     try {
       await signup(data);
+      const redirectTo = sessionStorage.getItem("redirectAfterLogin");
+      if (redirectTo) {
+        sessionStorage.removeItem("redirectAfterLogin");
+        window.location.href = redirectTo;
+        return;
+      }
       navigate("/dashboard", { replace: true });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Sign up failed");

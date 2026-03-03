@@ -1,0 +1,39 @@
+---
+description: Keep docs/e2e-scenarios.md in sync whenever E2E test scenarios are added, removed, updated or renamed.
+globs: frontend/e2e/**/*.spec.ts
+alwaysApply: false
+---
+
+# E2E Scenario Documentation
+
+`docs/e2e-scenarios.md` is the canonical catalogue of all Playwright E2E scenarios. It must always reflect the actual test files.
+
+## When to update
+
+Update `docs/e2e-scenarios.md` any time you:
+
+- **Add** a new `test(...)` block to any `*.spec.ts` file
+- **Remove** or **rename** an existing scenario
+- **Add** a new spec file (`NN-name.spec.ts`)
+- **Change** the user story a scenario belongs to
+
+## What to update
+
+1. **Header** — increment `Total scenarios` count.
+2. **Scenario Index table** — add/remove/update the row. Assign the next sequential ID (`E34`, `E35`, …).
+3. **User Story section** — add/remove/update the row in the matching `## USN` section.
+4. **New user story** — if adding a new spec file for a new user story, add a new `## USN — ...` section.
+
+## Example: adding scenario E34
+
+```markdown
+<!-- Scenario Index -->
+| E34 | 07-new-feature | US7 | User can export report as CSV | functional |
+
+<!-- US7 section -->
+| E34 | User can export report as CSV | Export button triggers download, file name matches `report-*.csv` |
+```
+
+## Do not skip this step
+
+The document is read by the team to understand test coverage at a glance. An out-of-date catalogue is worse than no catalogue.

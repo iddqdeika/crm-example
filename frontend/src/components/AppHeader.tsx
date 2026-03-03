@@ -14,6 +14,9 @@ export default function AppHeader() {
         {(profile?.role === "admin" || profile?.role === "buyer") && (
           <Link to="/campaigns" className="app-header__link" data-testid="header-campaigns-link">Campaigns</Link>
         )}
+        {(profile?.role === "content_manager" || profile?.role === "admin") && (
+          <Link to="/blog/manage" className="app-header__link" data-testid="header-blog-link">Blog</Link>
+        )}
         {profile?.role === "admin" && (
           <Link to="/admin" className="app-header__link" data-testid="header-admin-link">Admin</Link>
         )}
