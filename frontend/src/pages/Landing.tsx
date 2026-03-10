@@ -4,16 +4,25 @@ import BlogPostCard from "../components/BlogPostCard";
 import { blogApi, type BlogPostSummaryDto } from "../services/api";
 import "./Landing.css";
 
+const BLOG_PLACEHOLDER_COUNT = 3;
+
 export default function Landing() {
   const [latestPosts, setLatestPosts] = useState<BlogPostSummaryDto[]>([]);
+  const [isBlogLoading, setIsBlogLoading] = useState(true);
 
   useEffect(() => {
-    blogApi.list({ limit: 3 }).then((data) => {
-      if ("items" in data) {
-        setLatestPosts(data.items as BlogPostSummaryDto[]);
-      }
-    }).catch(() => {});
+    blogApi
+      .list({ limit: 3 })
+      .then((data) => {
+        if ("items" in data) {
+          setLatestPosts(data.items as BlogPostSummaryDto[]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsBlogLoading(false));
   }, []);
+
+  const showBlogSection = isBlogLoading || latestPosts.length > 0;
 
   return (
     <div className="landing">
@@ -28,6 +37,32 @@ export default function Landing() {
         </p>
         <hr className="landing__hero-rule" aria-hidden="true" />
       </header>
+
+      {showBlogSection && (
+        <section className="landing__blog" aria-label="Latest blog posts" aria-busy={isBlogLoading} data-testid="landing-blog-section">
+          <div className="landing__blog-header">
+            <h2 className="landing__blog-heading">From our blog</h2>
+            <Link to="/blog" className="landing__blog-see-all">See all posts</Link>
+          </div>
+          {isBlogLoading ? (
+            <ul className="landing__blog-grid" role="list" aria-hidden="true">
+              {Array.from({ length: BLOG_PLACEHOLDER_COUNT }, (_, i) => (
+                <li key={i}>
+                  <div className="landing__blog-placeholder-card" />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="landing__blog-grid" role="list">
+              {latestPosts.map((post) => (
+                <li key={post.id}>
+                  <BlogPostCard {...post} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <section className="landing__benefits" aria-label="Benefits">
         <div className="landing__benefits-inner">
@@ -54,22 +89,6 @@ export default function Landing() {
           </article>
         </div>
       </section>
-
-      {(latestPosts.length > 0) && (
-        <section className="landing__blog" aria-label="Latest blog posts" data-testid="landing-blog-section">
-          <div className="landing__blog-header">
-            <h2 className="landing__blog-heading">From our blog</h2>
-            <Link to="/blog" className="landing__blog-see-all">See all posts</Link>
-          </div>
-          <ul className="landing__blog-grid" role="list">
-            {latestPosts.map((post) => (
-              <li key={post.id}>
-                <BlogPostCard {...post} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       <section className="landing__cta" aria-label="Get started">
         <h2 className="landing__cta-heading">Let's check it</h2>

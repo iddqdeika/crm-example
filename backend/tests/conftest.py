@@ -112,3 +112,53 @@ async def admin_client(client: AsyncClient, admin_user: tuple[str, str]) -> Asyn
     email, password = admin_user
     await client.post("/api/auth/login", json={"email": email, "password": password})
     return client
+
+
+@pytest_asyncio.fixture
+async def buyer_user(db_session: AsyncSession) -> tuple[str, str]:
+    """Create a buyer user in the test DB; returns (email, password)."""
+    from models.user import User, UserRole
+    from services.auth_service import hash_password
+
+    u = User(
+        email="buyer@test.com",
+        hashed_password=hash_password("BuyerPass1!"),
+        display_name="Buyer",
+        role=UserRole.buyer,
+    )
+    db_session.add(u)
+    await db_session.flush()
+    return ("buyer@test.com", "BuyerPass1!")
+
+
+@pytest_asyncio.fixture
+async def content_manager_user(db_session: AsyncSession) -> tuple[str, str]:
+    """Create a content_manager user in the test DB; returns (email, password)."""
+    from models.user import User, UserRole
+    from services.auth_service import hash_password
+
+    u = User(
+        email="cm@test.com",
+        hashed_password=hash_password("CMPass1!"),
+        display_name="Content Manager",
+        role=UserRole.content_manager,
+    )
+    db_session.add(u)
+    await db_session.flush()
+    return ("cm@test.com", "CMPass1!")
+
+
+@pytest_asyncio.fixture
+async def buyer_client(client: AsyncClient, buyer_user: tuple[str, str]) -> AsyncClient:
+    """Client with session authenticated as buyer."""
+    email, password = buyer_user
+    await client.post("/api/auth/login", json={"email": email, "password": password})
+    return client
+
+
+@pytest_asyncio.fixture
+async def content_manager_client(client: AsyncClient, content_manager_user: tuple[str, str]) -> AsyncClient:
+    """Client with session authenticated as content_manager."""
+    email, password = content_manager_user
+    await client.post("/api/auth/login", json={"email": email, "password": password})
+    return client

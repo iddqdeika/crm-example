@@ -84,6 +84,7 @@ async def get_post_by_slug(
         return RedirectResponse(
             url=f"/blog/post/{redirect_slug}",
             status_code=status.HTTP_301_MOVED_PERMANENTLY,
+            headers={"X-Redirect-Slug": redirect_slug},
         )
     return response
 

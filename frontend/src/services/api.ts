@@ -86,6 +86,19 @@ export const profileApi = {
   },
 };
 
+export type DashboardCounts = {
+  campaigns?: number;
+  drafts?: number;
+  published?: number;
+  users?: number;
+};
+
+export const dashboardApi = {
+  async getDashboardCounts(): Promise<DashboardCounts> {
+    return request<DashboardCounts>("/dashboard/counts");
+  },
+};
+
 export type AdminUserSummary = {
   id: string;
   email: string;
@@ -288,6 +301,8 @@ export const blogApi = {
       redirect: "manual",
     });
     if (res.status === 301) {
+      const slugFromHeader = res.headers.get("X-Redirect-Slug")?.trim();
+      if (slugFromHeader) return { redirectSlug: slugFromHeader };
       const loc = res.headers.get("Location") || "";
       const match = /\/blog\/post\/([^/]+)/.exec(loc);
       if (match) return { redirectSlug: match[1] };

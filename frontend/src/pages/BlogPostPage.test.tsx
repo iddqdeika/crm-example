@@ -18,6 +18,7 @@ const mockPost = vi.hoisted(() => ({
 }));
 
 const mockUseAuth = vi.hoisted(() => vi.fn());
+const mockNavigate = vi.hoisted(() => vi.fn());
 
 vi.mock("../services/api", () => ({
   blogApi: {
@@ -28,6 +29,11 @@ vi.mock("../services/api", () => ({
 vi.mock("../contexts/AuthContext", () => ({
   useAuth: () => mockUseAuth(),
 }));
+
+vi.mock("react-router-dom", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("react-router-dom")>();
+  return { ...mod, useNavigate: () => mockNavigate };
+});
 
 const postEdited = {
   ...mockPost,
@@ -142,5 +148,17 @@ describe("BlogPostPage", () => {
     await screen.findByText("My Great Post");
     expect(screen.queryByRole("link", { name: /log in/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /register/i })).not.toBeInTheDocument();
+  });
+
+  it("on 301 old slug → navigates to new slug (replace) so old and new URLs work", async () => {
+    mockNavigate.mockClear();
+    const { blogApi } = await import("../services/api");
+    (blogApi.getBySlug as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      redirectSlug: "new-slug",
+    });
+    renderPage("old-slug");
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/blog/post/new-slug", { replace: true });
+    });
   });
 });

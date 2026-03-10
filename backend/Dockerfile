@@ -1,10 +1,13 @@
 # Multi-stage backend image: build deps, then runtime as non-root.
+# Copy dependency manifests first so pip install is cached until they change.
 FROM python:3.12-slim AS builder
 WORKDIR /app
 RUN pip install --no-cache-dir uv
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock ./
+RUN uv export --no-emit-project --no-dev -o requirements.txt && \
+    uv pip install --system -r requirements.txt
 COPY src ./src
-RUN uv pip install --system .
+RUN uv pip install --system --no-deps .
 
 FROM python:3.12-slim AS runtime
 WORKDIR /app

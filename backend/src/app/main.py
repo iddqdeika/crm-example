@@ -10,6 +10,7 @@ from api.auth import router as auth_router
 from api.blog import router as blog_router
 from api.campaign import router as campaign_router
 from api.column_config import router as column_config_router
+from api.dashboard import router as dashboard_router
 from api.profile import router as profile_router
 from core.logging import (
     generic_exception_handler,
@@ -54,6 +55,7 @@ api_router.include_router(profile_router)
 api_router.include_router(campaign_router)
 api_router.include_router(column_config_router)
 api_router.include_router(admin_router)
+api_router.include_router(dashboard_router)
 api_router.include_router(blog_router)
 
 

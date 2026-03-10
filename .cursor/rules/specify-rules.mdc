@@ -26,6 +26,10 @@ Auto-generated from all feature plans. Last updated: 2026-02-26
 - None (uses existing sessionStorage `redirectAfterLogin`; no backend change) (013-blog-auth-links)
 - Python 3.12+ (backend), TypeScript / React 18 (frontend) + React Router, existing AuthContext; FastAPI backend unchanged (014-landing-auth-blog-nav)
 - None (no new persistence; existing auth and blog APIs unchanged) (014-landing-auth-blog-nav)
+- Python 3.12+ (backend), TypeScript / React 18 (frontend) + React Router, existing AuthContext; design tokens from `frontend/src/index.css` and project design document (e.g. `docs/design.md`) (015-landing-top-signin-signup)
+- None (no new persistence) (015-landing-top-signin-signup)
+- Python 3.12+ (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy 2.x (backend); React, existing AuthContext and API client (frontend) (016-dashboard-role-counts)
+- Existing PostgreSQL (Campaign, BlogPost, User); no new tables (016-dashboard-role-counts)
 
 - Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React + FastAPI, SQLAlchemy, Alembic, Uvicorn, PostgreSQL, React, React Router, React Testing Library (001-adtech-auth-profile)
 
@@ -46,9 +50,9 @@ cd src; pytest; ruff check .
 Backend: Python 3.12 (FastAPI); Frontend: TypeScript + React: Follow standard conventions
 
 ## Recent Changes
+- 016-dashboard-role-counts: Added Python 3.12+ (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy 2.x (backend); React, existing AuthContext and API client (frontend)
+- 015-landing-top-signin-signup: Added Python 3.12+ (backend), TypeScript / React 18 (frontend) + React Router, existing AuthContext; design tokens from `frontend/src/index.css` and project design document (e.g. `docs/design.md`)
 - 014-landing-auth-blog-nav: Added Python 3.12+ (backend), TypeScript / React 18 (frontend) + React Router, existing AuthContext; FastAPI backend unchanged
-- 013-blog-auth-links: Added Python 3.12+ (backend), TypeScript / React 18 (frontend) + FastAPI, React Router, existing AuthContext and auth API
-- 012-blog-seo-slugs: Added Python 3.12+ (backend), TypeScript / React 18 (frontend) + FastAPI, SQLAlchemy 2.0 async, Alembic, React Router, Meilisearch Python client (existing)
 
 
 <!-- MANUAL ADDITIONS START -->

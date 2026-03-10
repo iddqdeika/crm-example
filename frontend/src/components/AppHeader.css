@@ -43,6 +43,45 @@
   border-radius: 2px;
 }
 
+/* Visitor nav: Sign up (primary) and Sign in (secondary) — design doc tokens */
+.app-header__link--primary {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  color: var(--color-bg-primary);
+  background-color: var(--color-accent-1);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: 6px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header__link--primary:hover {
+  filter: brightness(1.08);
+}
+
+.app-header__link--secondary {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 1px solid var(--color-accent-3);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: 6px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header__link--secondary:hover {
+  color: var(--color-accent-3);
+  border-color: var(--color-accent-3);
+}
+
 .app-header__user {
   font-family: var(--font-body);
   font-size: var(--font-size-small);

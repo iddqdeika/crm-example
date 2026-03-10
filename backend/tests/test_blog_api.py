@@ -309,6 +309,7 @@ async def test_get_by_slug_301_from_old_slug(
     resp = await public_client.get("/api/blog/posts/by-slug/old-slug", follow_redirects=False)
     assert resp.status_code == 301
     assert resp.headers.get("location", "").endswith("/blog/post/new-slug")
+    assert resp.headers.get("x-redirect-slug") == "new-slug"
 
 
 @pytest.mark.asyncio
